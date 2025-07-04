@@ -18,7 +18,7 @@ registerCorsPlugin(app)
 registerJwtPlugin(app)
 registerAuthMiddleware(app)
 registerCookiePlugin(app)
-registerGoogleOAuth2Provider(app);
+// registerGoogleOAuth2Provider(app);
 registerMultipartPlugin(app)
 
 async function start() {

@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -18,9 +17,100 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String
-  name      String?
-  role      String   @default("admin") // admin, kaprodi, dosen
+  salt      String
+  username  String?
+  role      String   @default("admin") // admin, kepala unit kerja, anggota
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  UserInfo        UserInfo?
+  UnitKerja       UnitKerja[] @relation("UserUnitKerja")
+  KepalaUnitKerja UnitKerja?  @relation("UserKepalaUnitKerja")
 }
 
+model UserInfo {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  NIP                 String?
+  GelarDepan          String?   @map("gelar_depan")
+  GelarBelakang       String?   @map("gelar_belakang")
+  JenisKelamin        String?   @map("jenis_kelamin") // Laki-laki, Perempuan
+  TempatLahir         String?   @map("tempat_lahir")
+  TanggalLahir        DateTime? @map("tanggal_lahir")
+  Alamat              String?
+  Phone               String?
+  NBM                 String?   @map("nbm")
+  NIDN                String?   @map("nidn")
+  NIDK                String?   @map("nidk")
+  NUPTK               String?   @map("nuptk")
+  IDScholar           String?   @map("id_scholar")
+  IDScopus            String?   @map("id_scopus")
+  IDShinta            String?   @map("id_shinta")
+  IDGaruda            String?   @map("id_garuda")
+  NPWP                String?   @map("npwp")
+  NIK                 String?   @map("nik")
+  JabatanStruktural   String?   @map("jabatan_struktural")
+  JabatanFungsional   String?   @map("jabatan_fungsional")
+  WorkEmail           String?   @map("work_email")
+  KTP                 File?     @relation("UserKTP")
+  DocNBM              File?     @relation("UserDocNBM")
+  DocNIDN             File?     @relation("UserDocNIDN")
+  Passport            File?     @relation("UserPassport")
+  BPJSKesehatan       File?     @relation("UserDocBPJSKesehatan")
+  BPJSKetenagakerjaan File?     @relation("UserDocBPJSKetenagakerjaan")
+  SertifikasiDosen    File?     @relation("UserDocSertifikasiDosen")
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model UnitKerja {
+  id                String   @id @default(cuid())
+  name              String   @unique
+  kepalaUnitKerjaId String?  @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  Anggota         User[] @relation("UserUnitKerja")
+  KepalaUnitKerja User?  @relation("UserKepalaUnitKerja", fields: [kepalaUnitKerjaId], references: [id])
+
+  @@map("unit_kerja")
+}
+
+model File {
+  id           String    @id @default(cuid())
+  filename     String
+  originalName String
+  path         String
+  mimetype     String
+  size         Int
+  extension    String
+  description  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  userKTPId String?   @unique @map("user_ktp_id")
+  userKTP   UserInfo? @relation("UserKTP", fields: [userKTPId], references: [id])
+
+  userDocNBMId String?   @unique @map("user_doc_nbm_id")
+  userDocNBM   UserInfo? @relation("UserDocNBM", fields: [userDocNBMId], references: [id])
+
+  userPassportId String?   @unique @map("user_passport_id")
+  userPassport   UserInfo? @relation("UserPassport", fields: [userPassportId], references: [id])
+
+  userDocBPJSKesehatanId String?   @unique @map("user_doc_bpjs_kesehatan_id")
+  userDocBPJSKesehatan   UserInfo? @relation("UserDocBPJSKesehatan", fields: [userDocBPJSKesehatanId], references: [id])
+
+  userDocBPJSKetenagakerjaanId String?   @unique @map("user_doc_bpjs_ketenagakerjaan_id")
+  userDocBPJSKetenagakerjaan   UserInfo? @relation("UserDocBPJSKetenagakerjaan", fields: [userDocBPJSKetenagakerjaanId], references: [id])
+
+  userDocSertifikasiDosenId String?   @unique @map("user_doc_sertifikasi_dosen_id")
+  userDocSertifikasiDosen   UserInfo? @relation("UserDocSertifikasiDosen", fields: [userDocSertifikasiDosenId], references: [id])
+
+  userDocNIDNId String?   @unique @map("user_doc_nidn_id")
+  userDocNIDN   UserInfo? @relation("UserDocNIDN", fields: [userDocNIDNId], references: [id])
+
+  @@index([filename])
+  @@index([createdAt])
+}
