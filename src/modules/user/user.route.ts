@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./user.schema";
-import { deleteUserHandler, getAllUsersHandler, getUserByIdHandler, getUserByTokenHandler, loginUserHandler, logoutUserHandler, registerUserHandler, updateUserHandler } from "./user.controller";
+import { deleteUserHandler, getAllUsersHandler, getUserByIdHandler, getUserByTokenHandler, loginUserHandler, logoutUserHandler, registerUserHandler, streamPhotoHandler, updateUserHandler, updateUserPhotoHandler } from "./user.controller";
 
 async function authRoutes(server: FastifyInstance) {
     server.post(
@@ -8,6 +8,7 @@ async function authRoutes(server: FastifyInstance) {
         {
             schema: {
                 tags: ["Auth"],
+                summary: "*Userinfo / Unit Kerja / Role(admin by default) => Optional*",
                 body: $ref("createUserSchema"),
             }
         },
@@ -96,6 +97,41 @@ async function userRoutes(server: FastifyInstance) {
             }
         },
         updateUserHandler
+    )
+
+    server.put(
+        "/:id/photo",
+        {
+            schema: {
+                tags: ["User"],
+                summary: "Update User Photo",
+                params: {
+                    type: "object",
+                    properties: {
+                        id: { type: "string" },
+                    },
+                },
+                body: $ref("updateUserPhotoSchema"),
+            },
+        },
+        updateUserPhotoHandler
+    )
+
+    server.get(
+        "/:id/photo",
+        {
+            schema: {
+                tags: ["User"],
+                summary: "Get User Photo",
+                params: {
+                    type: "object",
+                    properties: {
+                        id: { type: "string" },
+                    },
+                },
+            }
+        },
+        streamPhotoHandler
     )
 
     server.delete(

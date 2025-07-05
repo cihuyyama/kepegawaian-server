@@ -1,8 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { ChangePasswordInput, CreateUserInput, LoginUserInput, UpdateUserInput } from "./user.schema"
+import { ChangePasswordInput, CreateUserInput, LoginUserInput, UpdateUserInput, UpdateUserPhotoInput } from "./user.schema"
 import UserService from "./user.service"
 import { errorFilter } from "../../middlewares/error-handling"
 import { Role } from "../../utils/types"
+import { createReadStream } from "fs"
 
 export async function registerUserHandler(
     request: FastifyRequest<{
@@ -81,7 +82,7 @@ export async function logoutUserHandler(
         httpOnly: true,
         secure: true,
     });
-    
+
     reply.clearCookie("access_token", {
         path: "/",
         domain: process.env.DOMAIN || "localhost",
@@ -186,6 +187,61 @@ export async function updateUserHandler(
             message: "User updated successfully",
             status: 200,
         })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function updateUserPhotoHandler(
+    request: FastifyRequest<{
+        Params: {
+            id: string
+        },
+        Body: UpdateUserPhotoInput
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { id } = request.params
+
+        const imageFile = await UserService.UpdateUserPhoto(id, request.body.image)
+
+        reply.send({
+            data: imageFile,
+            message: "User photo updated successfully",
+            status: 200,
+        })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function streamPhotoHandler(
+    request: FastifyRequest<{
+        Params: {
+            id: string
+        }
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { id } = request.params
+
+        const user = await UserService.GetUserById(id)
+
+        if (!user.photoFile || !user.imgUrl) {
+            reply
+                .header("Content-Type", "image/png")
+                .header("Content-Disposition", `inline; filename="blank-profile-picture-973460_1280.png"`);
+            const notFoundImageUrl = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+            return reply.redirect(notFoundImageUrl);
+        }
+
+        reply
+            .header("Content-Type", user.photoFile.mimetype)
+            .header("Content-Disposition", `inline; filename="${user.photoFile.originalName}"`)
+
+        return reply.send(createReadStream(user.photoFile.path));
     } catch (error) {
         errorFilter(error, reply)
     }

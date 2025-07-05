@@ -1,21 +1,88 @@
 import { db } from "../../config/prisma";
-import { CreateUserInput, UpdateUserInput } from "./user.schema";
+import { FileEntries } from "../../utils/types";
+import { CreateUserInfoInput, UpdateUserInput } from "./user.schema";
 
 class UserRepository {
-    static async Insert(email: string, password: string, salt: string, username?: string, role?: string) {
+    static async Insert(
+        email: string,
+        password: string,
+        salt: string,
+        username: string,
+        role?: string,
+        unitKerjaId?: string,
+        userinfo?: CreateUserInfoInput
+    ) {
         const user = await db.user.create({
             data: {
                 email,
                 password,
                 salt,
                 username,
-                role
+                role,
+                ...(unitKerjaId && {
+                    UnitKerja: {
+                        connect: {
+                            id: unitKerjaId,
+                        }
+                    }
+                }),
+                ...(userinfo && {
+                    UserInfo: {
+                        create: {
+                            ...userinfo,
+                        }
+                    }
+                })
             },
 
             select: {
                 id: true,
                 email: true,
                 username: true,
+                createdAt: true,
+                updatedAt: true,
+            }
+        })
+
+        return user;
+    }
+
+    static async UpdatePhoto(userId: string, imageFile: FileEntries) {
+        const user = await db.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                imgUrl: `api/v1/users/${userId}/photo`,
+                photoFile: {
+                    upsert: {
+                        where: {
+                            userPhotoId: userId,
+                        },
+                        create: {
+                            filename: imageFile.filename,
+                            mimetype: imageFile.mimetype,
+                            size: imageFile.size,
+                            originalName: imageFile.originalName,
+                            extension: imageFile.extension,
+                            path: imageFile.path,
+                        },
+                        update: {
+                            filename: imageFile.filename,
+                            mimetype: imageFile.mimetype,
+                            size: imageFile.size,
+                            originalName: imageFile.originalName,
+                            extension: imageFile.extension,
+                            path: imageFile.path,
+                        }
+                    },
+                },
+            },
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                photoFile: true,
                 createdAt: true,
                 updatedAt: true,
             }
@@ -50,6 +117,9 @@ class UserRepository {
                 id: true,
                 email: true,
                 username: true,
+                imgUrl: true,
+                role: true,
+                photoFile: true,
                 createdAt: true,
                 updatedAt: true,
             }
@@ -95,15 +165,34 @@ class UserRepository {
     }
 
     static async Update(id: string, data: UpdateUserInput) {
+        const {
+            username,
+            email,
+            role,
+            unitKerjaId,
+        } = data;
         const user = await db.user.update({
             where: {
                 id,
             },
-            data,
+            data: {
+                username,
+                email,
+                role,
+                ...(unitKerjaId && {
+                    UnitKerja: {
+                        connect: {
+                            id: unitKerjaId,
+                        }
+                    }
+                })
+            },
             select: {
                 id: true,
                 username: true,
                 email: true,
+                role: true,
+                UnitKerja: true,
                 createdAt: true,
                 updatedAt: true,
             }

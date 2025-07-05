@@ -20,6 +20,7 @@ model User {
   salt      String
   username  String?
   role      String   @default("admin") // admin, kepala unit kerja, anggota
+  imgUrl    String?  @map("img_url")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -27,6 +28,7 @@ model User {
   UserInfo        UserInfo?
   UnitKerja       UnitKerja[] @relation("UserUnitKerja")
   KepalaUnitKerja UnitKerja?  @relation("UserKepalaUnitKerja")
+  photoFile       File?       @relation("UserPhoto")
 }
 
 model UserInfo {
@@ -61,7 +63,7 @@ model UserInfo {
   BPJSKetenagakerjaan File?     @relation("UserDocBPJSKetenagakerjaan")
   SertifikasiDosen    File?     @relation("UserDocSertifikasiDosen")
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UnitKerja {
@@ -72,7 +74,7 @@ model UnitKerja {
   updatedAt         DateTime @updatedAt
 
   Anggota         User[] @relation("UserUnitKerja")
-  KepalaUnitKerja User?  @relation("UserKepalaUnitKerja", fields: [kepalaUnitKerjaId], references: [id])
+  KepalaUnitKerja User?  @relation("UserKepalaUnitKerja", fields: [kepalaUnitKerjaId], references: [id], onDelete: SetNull)
 
   @@map("unit_kerja")
 }
@@ -91,25 +93,28 @@ model File {
   deletedAt    DateTime?
 
   userKTPId String?   @unique @map("user_ktp_id")
-  userKTP   UserInfo? @relation("UserKTP", fields: [userKTPId], references: [id])
+  userKTP   UserInfo? @relation("UserKTP", fields: [userKTPId], references: [id], onDelete: Cascade)
 
   userDocNBMId String?   @unique @map("user_doc_nbm_id")
-  userDocNBM   UserInfo? @relation("UserDocNBM", fields: [userDocNBMId], references: [id])
+  userDocNBM   UserInfo? @relation("UserDocNBM", fields: [userDocNBMId], references: [id], onDelete: Cascade)
 
   userPassportId String?   @unique @map("user_passport_id")
-  userPassport   UserInfo? @relation("UserPassport", fields: [userPassportId], references: [id])
+  userPassport   UserInfo? @relation("UserPassport", fields: [userPassportId], references: [id], onDelete: Cascade)
 
   userDocBPJSKesehatanId String?   @unique @map("user_doc_bpjs_kesehatan_id")
-  userDocBPJSKesehatan   UserInfo? @relation("UserDocBPJSKesehatan", fields: [userDocBPJSKesehatanId], references: [id])
+  userDocBPJSKesehatan   UserInfo? @relation("UserDocBPJSKesehatan", fields: [userDocBPJSKesehatanId], references: [id], onDelete: Cascade)
 
   userDocBPJSKetenagakerjaanId String?   @unique @map("user_doc_bpjs_ketenagakerjaan_id")
-  userDocBPJSKetenagakerjaan   UserInfo? @relation("UserDocBPJSKetenagakerjaan", fields: [userDocBPJSKetenagakerjaanId], references: [id])
+  userDocBPJSKetenagakerjaan   UserInfo? @relation("UserDocBPJSKetenagakerjaan", fields: [userDocBPJSKetenagakerjaanId], references: [id], onDelete: Cascade)
 
   userDocSertifikasiDosenId String?   @unique @map("user_doc_sertifikasi_dosen_id")
-  userDocSertifikasiDosen   UserInfo? @relation("UserDocSertifikasiDosen", fields: [userDocSertifikasiDosenId], references: [id])
+  userDocSertifikasiDosen   UserInfo? @relation("UserDocSertifikasiDosen", fields: [userDocSertifikasiDosenId], references: [id], onDelete: Cascade)
 
   userDocNIDNId String?   @unique @map("user_doc_nidn_id")
-  userDocNIDN   UserInfo? @relation("UserDocNIDN", fields: [userDocNIDNId], references: [id])
+  userDocNIDN   UserInfo? @relation("UserDocNIDN", fields: [userDocNIDNId], references: [id], onDelete: Cascade)
+
+  userPhotoId String? @unique @map("user_photo_id")
+  userPhoto   User?   @relation("UserPhoto", fields: [userPhotoId], references: [id], onDelete: Cascade)
 
   @@index([filename])
   @@index([createdAt])

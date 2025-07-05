@@ -1,6 +1,10 @@
+import { MultipartFile } from "@fastify/multipart";
 import { hashPassword, verifyPassword } from "../../utils/hash";
+import { FileEntries } from "../../utils/types";
 import UserRepository from "./user.repository";
 import { CreateUserInput, LoginUserInput, UpdateUserInput } from "./user.schema";
+import path from "path";
+import fs from "fs";
 
 class UserService {
     static async Register(data: CreateUserInput) {
@@ -9,7 +13,7 @@ class UserService {
             salt,
         } = hashPassword(data.password)
 
-        const user = await UserRepository.Insert(data.email, hash, salt, data.username, data.role)
+        const user = await UserRepository.Insert(data.email, hash, salt, data.username, data.role, data.unitKerjaId, data.userinfo)
         return user
     }
 
@@ -57,6 +61,47 @@ class UserService {
         }
 
         return user
+    }
+
+    static async UpdateUserPhoto(userId: string, imageFile: MultipartFile) {
+        const user = await UserRepository.FindById(userId)
+        if (!user) {
+            throw new Error("User not found")
+        }
+
+        // ensure delete old photo if exists
+        if (user.photoFile) {
+            await fs.promises.unlink(user.photoFile.path);
+        }
+
+        const uploadDir = path.join(__dirname, `../../../public/images/users/${user.email}`);
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+
+        const clearFileName = imageFile.filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+        const uniqueFilename = `${Date.now()}-${clearFileName}`;
+        const filePath = path.join(uploadDir, uniqueFilename);
+
+        await fs.promises.writeFile(filePath, await imageFile.toBuffer());
+
+
+        const fileData: FileEntries = {
+            filename: uniqueFilename,
+            originalName: imageFile.filename,
+            path: filePath,
+            mimetype: imageFile.mimetype,
+            size: imageFile.file.bytesRead,
+            extension: path.extname(imageFile.filename).toLowerCase(),
+        }
+
+        const updateUserPhoto = await UserRepository.UpdatePhoto(userId, fileData)
+
+        if (!updateUserPhoto) {
+            throw new Error("Failed to update user photo")
+        }
+
+        return updateUserPhoto
     }
 
     static async changePassword(userId: string, oldPassword: string, newPassword: string) {
