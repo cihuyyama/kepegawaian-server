@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, upsertUserInfoHandler } from "./userinfo.controller";
+import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, upsertDocumentsHandler, upsertUserInfoHandler } from "./userinfo.controller";
 import { $ref } from "./userinfo.schema";
 
 async function userInfoRoutes(app: FastifyInstance) {
@@ -12,6 +12,24 @@ async function userInfoRoutes(app: FastifyInstance) {
             }
         },
         upsertUserInfoHandler
+    )
+
+    app.put(
+        "/documents/:userId",
+        {
+            schema: {
+                tags: ["User Info"],
+                body: $ref("createDokumenSchema"),
+                summary: 'Upload User Document with document type("KTP" | "DocNBM" | "DocNIDN" | "SertifikasiDosen" | "Passport" | "BPJSKesehatan" | "BPJSKetenagakerjaan")',
+                params: {
+                    type: "object",
+                    properties: {
+                        userId: { type: "string" },
+                    },
+                },
+            }
+        },
+        upsertDocumentsHandler
     )
 
     app.get(

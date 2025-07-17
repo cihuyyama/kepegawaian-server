@@ -29,3 +29,13 @@ export enum Role {
     ADMIN = 'admin',
     PESERTA = 'peserta',
 }
+
+export enum UserDocuments {
+    KTP = 'KTP',
+    DocNBM = 'DocNBM',
+    DocNIDN = 'DocNIDN',
+    Passport = 'Passport',
+    BPJSKesehatan = 'BPJSKesehatan',
+    BPJSKetenagakerjaan = 'BPJSKetenagakerjaan',
+    SertifikasiDosen = 'SertifikasiDosen',
+}

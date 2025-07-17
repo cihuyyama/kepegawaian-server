@@ -30,8 +30,16 @@ const createUserInfoSchema = z.object({
 })
 
 const createDokumenSchema = z.object({
-    id: z.custom<MultipartValue<string>>(),
-    files: z.custom<MultipartFile[]>()
+    file: z.custom<MultipartFile>(),
+    documentsType: z.enum([
+        "KTP",
+        "DocNBM",
+        "DocNIDN",
+        "SertifikasiDosen",
+        "Passport",
+        "BPJSKesehatan",
+        "BPJSKetenagakerjaan",
+    ])
 })
 
 export type CreateUserInfoInput = z.infer<typeof createUserInfoSchema>;

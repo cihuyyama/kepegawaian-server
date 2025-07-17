@@ -147,13 +147,13 @@ export async function getUserByTokenHandler(
     reply: FastifyReply
 ) {
     try {
-        if (request.user.role !== Role.ADMIN) {
-            reply.status(403).send({
-                message: "Forbidden",
-                status: 403,
-            })
-            return
-        }
+        // if (request.user.role !== Role.ADMIN) {
+        //     reply.status(403).send({
+        //         message: "Forbidden",
+        //         status: 403,
+        //     })
+        //     return
+        // }
 
 
         const user = await UserService.GetUserById(request.user.id)

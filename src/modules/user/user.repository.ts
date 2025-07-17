@@ -119,6 +119,18 @@ class UserRepository {
                 username: true,
                 imgUrl: true,
                 role: true,
+                UserInfo: {
+                    include: {
+                        KTP: true,
+                        BPJSKesehatan: true,
+                        BPJSKetenagakerjaan: true,
+                        DocNBM: true,
+                        DocNIDN: true,
+                        SertifikasiDosen: true,
+                        Passport: true,
+                    }
+                },
+                UnitKerja: true,
                 photoFile: true,
                 createdAt: true,
                 updatedAt: true,

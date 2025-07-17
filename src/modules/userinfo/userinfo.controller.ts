@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateUserInfoInput } from "./userinfo.schema";
+import { CreateDokumenInput, CreateUserInfoInput } from "./userinfo.schema";
 import { errorFilter } from "../../middlewares/error-handling";
 import UserInfoService from "./userinfo.service";
+import { UserDocuments } from "../../utils/types";
 
 export async function upsertUserInfoHandler(
     request: FastifyRequest<{
@@ -16,6 +17,34 @@ export async function upsertUserInfoHandler(
         reply.status(201).send({
             data: userInfo,
             message: "User Info created successfully",
+            status: 201,
+        });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function upsertDocumentsHandler(
+    request: FastifyRequest<{
+        Params: {
+            userId: string;
+        },
+        Body: CreateDokumenInput
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { userId } = request.params;
+        const { documentsType: documents } = request.body;
+        const file = request.body.file;
+
+        const documentTypes = UserDocuments[documents];
+
+        const newFile = await UserInfoService.upsertDocuments(userId, documentTypes, file);
+
+        reply.status(201).send({
+            data: newFile,
+            message: "Document uploaded successfully",
             status: 201,
         });
     } catch (error) {
