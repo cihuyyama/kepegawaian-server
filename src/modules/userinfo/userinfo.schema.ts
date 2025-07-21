@@ -31,15 +31,12 @@ const createUserInfoSchema = z.object({
 
 const createDokumenSchema = z.object({
     file: z.custom<MultipartFile>(),
-    documentsType: z.enum([
-        "KTP",
-        "DocNBM",
-        "DocNIDN",
-        "SertifikasiDosen",
-        "Passport",
-        "BPJSKesehatan",
-        "BPJSKetenagakerjaan",
-    ])
+    documentsType: z.custom<MultipartValue<string>>().refine(
+        (value) => typeof value === "string" && ["KTP", "DocNBM", "DocNIDN", "SertifikasiDosen", "Passport", "BPJSKesehatan", "BPJSKetenagakerjaan"].includes(value),
+        {
+            message: "Invalid document type",
+        }
+    )
 })
 
 export type CreateUserInfoInput = z.infer<typeof createUserInfoSchema>;

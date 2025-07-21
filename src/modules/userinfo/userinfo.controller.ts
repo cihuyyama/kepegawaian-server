@@ -35,12 +35,10 @@ export async function upsertDocumentsHandler(
 ) {
     try {
         const { userId } = request.params;
-        const { documentsType: documents } = request.body;
         const file = request.body.file;
+        const documentsType = request.body.documentsType as { value: string };
 
-        const documentTypes = UserDocuments[documents];
-
-        const newFile = await UserInfoService.upsertDocuments(userId, documentTypes, file);
+        const newFile = await UserInfoService.upsertDocuments(userId, documentsType.value as UserDocuments, file);
 
         reply.status(201).send({
             data: newFile,
