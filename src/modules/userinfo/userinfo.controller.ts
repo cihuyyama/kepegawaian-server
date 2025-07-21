@@ -3,6 +3,7 @@ import { CreateDokumenInput, CreateUserInfoInput } from "./userinfo.schema";
 import { errorFilter } from "../../middlewares/error-handling";
 import UserInfoService from "./userinfo.service";
 import { UserDocuments } from "../../utils/types";
+import { createReadStream } from "fs";
 
 export async function upsertUserInfoHandler(
     request: FastifyRequest<{
@@ -45,6 +46,32 @@ export async function upsertDocumentsHandler(
             message: "Document uploaded successfully",
             status: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamDokumenHandler(
+    request: FastifyRequest<{
+        Params: { userId: string; documentType: UserDocuments };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { userId, documentType } = request.params;
+        const { filePath, document } = await UserInfoService.streamUserDocument(userId, documentType);
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`)
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }

@@ -86,6 +86,24 @@ class UserInfoService {
         return newFile;
     }
 
+    static async streamUserDocument(userId: string, documentType: UserDocuments) {
+        const userInfo = await UserInfoRepository.FindByUserId(userId);
+        if (!userInfo) {
+            throw new Error("User info not found");
+        }
+
+        const document = userInfo[documentType];
+        if (!document) {
+            throw new Error(`Document type ${documentType} not found for user ${userId}`);
+        }
+
+        const filePath = document.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document};
+    }
+
     static async getUserInfoByUserId(userId: string) {
         const userInfo = await UserInfoRepository.FindByUserId(userId);
         if (!userInfo) {

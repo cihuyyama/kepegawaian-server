@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, upsertDocumentsHandler, upsertUserInfoHandler } from "./userinfo.controller";
+import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, streamDokumenHandler, upsertDocumentsHandler, upsertUserInfoHandler } from "./userinfo.controller";
 import { $ref } from "./userinfo.schema";
 
 async function userInfoRoutes(app: FastifyInstance) {
@@ -30,6 +30,24 @@ async function userInfoRoutes(app: FastifyInstance) {
             }
         },
         upsertDocumentsHandler
+    )
+
+    app.get(
+        "/documents/:userId/:documentType",
+        {
+            schema: {
+                tags: ["User Info"],
+                summary: "Stream User Document by User ID and Document Type",
+                params: {
+                    type: "object",
+                    properties: {
+                        userId: { type: "string" },
+                        documentType: { type: "string", enum: ["KTP", "DocNBM", "DocNIDN", "SertifikasiDosen", "Passport", "BPJSKesehatan", "BPJSKetenagakerjaan"] },
+                    },
+                },
+            }
+        },
+        streamDokumenHandler
     )
 
     app.get(
