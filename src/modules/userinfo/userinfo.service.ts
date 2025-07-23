@@ -105,7 +105,7 @@ class UserInfoService {
     }
 
     static async getUserInfoByUserId(userId: string) {
-        const userInfo = await UserInfoRepository.FindByUserId(userId);
+        const userInfo = await UserRepository.FindById(userId);
         if (!userInfo) {
             throw new Error("User info not found");
         }

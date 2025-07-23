@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, streamDokumenHandler, upsertDocumentsHandler, upsertUserInfoHandler } from "./userinfo.controller";
+import { deleteUserInfoByUserIdHandler, getAllUserInfosHandler, getUserInfoByIdHandler, getUserInfoByUserIdHandler, streamDokumenHandler, upsertDocumentsHandler, upsertUserInfoHandler } from "./userinfo.controller";
 import { $ref } from "./userinfo.schema";
 
 async function userInfoRoutes(app: FastifyInstance) {
@@ -97,7 +97,7 @@ async function userInfoRoutes(app: FastifyInstance) {
                 },
             }
         },
-        getUserInfoByIdHandler
+        getUserInfoByUserIdHandler
     )
 
     app.delete(

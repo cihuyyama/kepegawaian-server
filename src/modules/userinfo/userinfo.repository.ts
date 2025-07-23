@@ -118,7 +118,7 @@ class UserInfoRepository {
                     userId,
                 },
                 update: updateData,
-                create: createData, 
+                create: createData,
                 include: {
                     KTP: true,
                     DocNBM: true,
@@ -134,119 +134,118 @@ class UserInfoRepository {
         });
     }
 
-    static async FindAll(search ?: string) {
-    const userInfos = await db.userInfo.findMany({
-        where: {
-
-        }
-    });
-    return userInfos;
-}
+    static async FindAll(search?: string) {
+        const userInfos = await db.userInfo.findMany({
+            where: {
+            }
+        });
+        return userInfos;
+    }
 
     static async FindByUserId(userId: string) {
-    const userInfo = await db.userInfo.findUnique({
-        where: {
-            userId,
-        },
-        select: {
-            id: true,
-            userId: true,
-            NIP: true,
-            GelarDepan: true,
-            GelarBelakang: true,
-            TempatLahir: true,
-            TanggalLahir: true,
-            JenisKelamin: true,
-            Alamat: true,
-            Phone: true,
-            NBM: true,
-            NIDN: true,
-            NIDK: true,
-            NUPTK: true,
-            IDScholar: true,
-            IDScopus: true,
-            IDShinta: true,
-            IDGaruda: true,
-            NPWP: true,
-            NIK: true,
-            JabatanStruktural: true,
-            JabatanFungsional: true,
-            WorkEmail: true,
-            KTP: true,
-            DocNBM: true,
-            DocNIDN: true,
-            BPJSKesehatan: true,
-            BPJSKetenagakerjaan: true,
-            Passport: true,
-            SertifikasiDosen: true,
-            user: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    role: true,
-                    imgUrl: true,
+        const userInfo = await db.userInfo.findUnique({
+            where: {
+                userId,
+            },
+            select: {
+                id: true,
+                userId: true,
+                NIP: true,
+                GelarDepan: true,
+                GelarBelakang: true,
+                TempatLahir: true,
+                TanggalLahir: true,
+                JenisKelamin: true,
+                Alamat: true,
+                Phone: true,
+                NBM: true,
+                NIDN: true,
+                NIDK: true,
+                NUPTK: true,
+                IDScholar: true,
+                IDScopus: true,
+                IDShinta: true,
+                IDGaruda: true,
+                NPWP: true,
+                NIK: true,
+                JabatanStruktural: true,
+                JabatanFungsional: true,
+                WorkEmail: true,
+                KTP: true,
+                DocNBM: true,
+                DocNIDN: true,
+                BPJSKesehatan: true,
+                BPJSKetenagakerjaan: true,
+                Passport: true,
+                SertifikasiDosen: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        username: true,
+                        role: true,
+                        imgUrl: true,
+                    }
                 }
             }
-        }
-    });
+        });
 
-    return userInfo;
-}
+        return userInfo;
+    }
 
     static async FindById(id: string) {
-    const userInfo = await db.userInfo.findUnique({
-        where: {
-            id,
-        },
-        select: {
-            id: true,
-            userId: true,
-            NIP: true,
-            GelarDepan: true,
-            GelarBelakang: true,
-            TempatLahir: true,
-            TanggalLahir: true,
-            JenisKelamin: true,
-            Alamat: true,
-            Phone: true,
-            NBM: true,
-            NIDN: true,
-            NIDK: true,
-            NUPTK: true,
-            IDScholar: true,
-            IDScopus: true,
-            IDShinta: true,
-            IDGaruda: true,
-            NPWP: true,
-            NIK: true,
-            JabatanStruktural: true,
-            JabatanFungsional: true,
-            WorkEmail: true,
-            user: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    role: true,
-                    imgUrl: true,
+        const userInfo = await db.userInfo.findUnique({
+            where: {
+                id,
+            },
+            select: {
+                id: true,
+                userId: true,
+                NIP: true,
+                GelarDepan: true,
+                GelarBelakang: true,
+                TempatLahir: true,
+                TanggalLahir: true,
+                JenisKelamin: true,
+                Alamat: true,
+                Phone: true,
+                NBM: true,
+                NIDN: true,
+                NIDK: true,
+                NUPTK: true,
+                IDScholar: true,
+                IDScopus: true,
+                IDShinta: true,
+                IDGaruda: true,
+                NPWP: true,
+                NIK: true,
+                JabatanStruktural: true,
+                JabatanFungsional: true,
+                WorkEmail: true,
+                user: {
+                    select: {
+                        id: true,
+                        email: true,
+                        username: true,
+                        role: true,
+                        imgUrl: true,
+                    }
                 }
             }
-        }
-    });
+        });
 
-    return userInfo;
-}
+        return userInfo;
+    }
 
     static async DeleteByUserId(userId: string) {
-    const userInfo = await db.userInfo.delete({
-        where: {
-            userId,
-        },
-    });
+        const userInfo = await db.userInfo.delete({
+            where: {
+                userId,
+            },
+        });
 
-    return userInfo;
-}
+        return userInfo;
+    }
 }
 
 export default UserInfoRepository;
