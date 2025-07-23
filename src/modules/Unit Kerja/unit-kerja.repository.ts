@@ -117,7 +117,11 @@ class UnitKerjaRepository {
             },
             include: {
                 KepalaUnitKerja: true,
-                Anggota: true,
+                Anggota: {
+                    include: {
+                        UserInfo: true,
+                    }
+                },
             },
         })
 

@@ -130,6 +130,15 @@ class UserRepository {
                         Passport: true,
                     }
                 },
+                KepalaUnitKerja: {
+                    include: {
+                        Anggota: {
+                            include: {
+                                UserInfo: true,
+                            }
+                        }
+                    }
+                },
                 UnitKerja: true,
                 photoFile: true,
                 createdAt: true,
