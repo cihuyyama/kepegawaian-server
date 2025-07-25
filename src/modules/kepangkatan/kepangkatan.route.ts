@@ -4,7 +4,7 @@ import { createKepangkatanHandler, deleteKepangkatanHandler, getAllKepangkatanHa
 
 async function kepangkatanRoutes(app: FastifyInstance) {
     app.post(
-        "/",
+        "/:userId",
         {
             schema: {
                 tags: ["Kepangkatan"],
