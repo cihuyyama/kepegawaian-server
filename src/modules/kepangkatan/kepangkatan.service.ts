@@ -7,10 +7,6 @@ import { FileEntries } from "../../utils/types";
 
 class KepangkatanService {
     static async createKepangkatan(userId: string, data: KepangkatanSchema, file: MultipartFile) {
-        const kepangkatan = await KepangkatanRepository.FindByUserId(userId);
-        if (!kepangkatan) {
-            throw new Error("Kepangkatan does not exist for this user");
-        }
 
         const uploadDir = path.join(__dirname, `../../../public/dokumen/kepangkatan/${userId}`);
         if (!fs.existsSync(uploadDir)) {
