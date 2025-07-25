@@ -9,6 +9,12 @@ async function kepangkatanRoutes(app: FastifyInstance) {
             schema: {
                 tags: ["Kepangkatan"],
                 body: $ref("kepangkatanSchema"),
+                params: {
+                    type: "object",
+                    properties: {
+                        userId: { type: "string" },
+                    },
+                },
             }
         },
         createKepangkatanHandler

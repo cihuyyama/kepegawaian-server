@@ -8,16 +8,19 @@ import { createReadStream } from "fs";
 export async function createKepangkatanHandler(
     request: FastifyRequest<{
         Body: KepangkatanSchema;
+        Params: {
+            userId: string;
+        },
         File: MultipartFile;
     }>,
     reply: FastifyReply
 ) {
     try {
-        const { id } = request.user; // Assuming userId is available in the request context
         const data = request.body;
         const file = request.body.fileSK;
+        const { userId } = request.params;
 
-        const kepangkatan = await KepangkatanService.createKepangkatan(id, data, file);
+        const kepangkatan = await KepangkatanService.createKepangkatan(userId, data, file);
 
         reply.status(201).send({
             data: kepangkatan,
