@@ -7,6 +7,8 @@ import { userInfoSchemas } from "./modules/userinfo/userinfo.schema";
 import userInfoRoutes from "./modules/userinfo/userinfo.route";
 import { kepangkatanSchemas } from "./modules/kepangkatan/kepangkatan.schema";
 import kepangkatanRoutes from "./modules/kepangkatan/kepangkatan.route";
+import { keluargaSchemas } from "./modules/anggota keluarga/keluarga.schema";
+import keluargaRoutes from "./modules/anggota keluarga/keluarga.route";
 
 export async function serverRoutes(app: FastifyInstance) {
     for (const schema of [
@@ -14,6 +16,7 @@ export async function serverRoutes(app: FastifyInstance) {
         ...unitKerjaSchemas,
         ...userInfoSchemas,
         ...kepangkatanSchemas,
+        ...keluargaSchemas,
     ]) {
         app.addSchema(schema)
     }
@@ -27,4 +30,5 @@ export async function serverRoutes(app: FastifyInstance) {
     app.register(unitKerjaRoutes, { prefix: '/api/v1/unit-kerja' })
     app.register(userInfoRoutes, { prefix: '/api/v1/userinfo' })
     app.register(kepangkatanRoutes, { prefix: '/api/v1/kepangkatan' })
+    app.register(keluargaRoutes, { prefix: '/api/v1/keluarga' })
 }
