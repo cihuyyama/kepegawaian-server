@@ -26,10 +26,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   UserInfo        UserInfo?
-  UnitKerja       UnitKerja[]  @relation("UserUnitKerja")
-  KepalaUnitKerja UnitKerja?   @relation("UserKepalaUnitKerja")
-  photoFile       File?        @relation("UserPhoto")
-  Kepangkatan     Kepangkatan?
+  UnitKerja       UnitKerja[]       @relation("UserUnitKerja")
+  KepalaUnitKerja UnitKerja?        @relation("UserKepalaUnitKerja")
+  photoFile       File?             @relation("UserPhoto")
+  Kepangkatan     Kepangkatan[]
+  AnggotaKeluarga AnggotaKeluarga[]
 }
 
 model UserInfo {
@@ -141,4 +142,25 @@ model Kepangkatan {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("kepangkatan")
+}
+
+model AnggotaKeluarga {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  nama              String
+  tempatLahir       String?  @map("tempat_lahir")
+  agama             String?  @map("agama")
+  jenisKelamin      String?  @map("jenis_kelamin")
+  nik               String?  @map("nik")
+  pendidikan        String?  @map("pendidikan")
+  hubunganKeluarga  String?  @map("hubungan_keluarga") // Suami, Istri, Anak, Orang Tua
+  tunjanganBeras    String?  @map("tunjangan_beras")
+  tunjanganKeluarga String?  @map("tunjangan_keluarga")
+  potonganAsuransi  String?  @map("potongan_asuransi")
+  tanggunganPajak   String?  @map("tanggungan_pajak")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("anggota_keluarga")
 }
