@@ -117,12 +117,13 @@ export async function getKepangkatanByUserIdHandler(
 export async function updateKepangkatanHandler(
     request: FastifyRequest<{
         Body: KepangkatanSchema;
+        Params: { id: string };
         File: MultipartFile;
     }>,
     reply: FastifyReply
 ) {
     try {
-        const { id } = request.user; // Assuming userId is available in the request context
+        const { id } = request.params; 
         const data = request.body;
         const file = request.body.fileSK;
 

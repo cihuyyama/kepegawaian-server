@@ -68,7 +68,7 @@ class KepangkatanRepository {
     }
 
     static async FindByUserId(userId: string) {
-        const kepangkatan = await db.kepangkatan.findUnique({
+        const kepangkatan = await db.kepangkatan.findMany({
             where: {
                 userId
             },

@@ -126,7 +126,7 @@ model File {
 
 model Kepangkatan {
   id                  String    @id @default(cuid())
-  userId              String    @unique @map("user_id")
+  userId              String    @map("user_id")
   DokumenSKId         String?   @unique @map("dokumen_sk_id")
   nama                String
   NomorSK             String?   @map("nomor_sk")
@@ -162,5 +162,6 @@ model AnggotaKeluarga {
   updatedAt         DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("anggota_keluarga")
 }

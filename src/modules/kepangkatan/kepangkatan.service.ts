@@ -38,26 +38,26 @@ class KepangkatanService {
         if (!updatedKepangkatan) {
             throw new Error("Failed to upload document SK");
         }
-        
+
         return updatedKepangkatan;
     }
 
     static async streamDokumenSK(id: string) {
-            const kepangkatan = await KepangkatanRepository.FindById(id);
-            if (!kepangkatan) {
-                throw new Error("Kepangkatan not found");
-            }
-            
-            if (!kepangkatan.DokumenSK) {
-                throw new Error("Dokumen SK not found for this kepangkatan");
-            }
-
-            const filePath = kepangkatan.DokumenSK.path;
-            if (!fs.existsSync(filePath)) {
-                throw new Error(`File not found at path: ${filePath}`);
-            }
-            return { filePath, document: kepangkatan.DokumenSK };
+        const kepangkatan = await KepangkatanRepository.FindById(id);
+        if (!kepangkatan) {
+            throw new Error("Kepangkatan not found");
         }
+
+        if (!kepangkatan.DokumenSK) {
+            throw new Error("Dokumen SK not found for this kepangkatan");
+        }
+
+        const filePath = kepangkatan.DokumenSK.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document: kepangkatan.DokumenSK };
+    }
 
     static async getAllKepangkatan() {
         const kepangkatanList = await KepangkatanRepository.FindAll();
@@ -73,24 +73,20 @@ class KepangkatanService {
     }
 
     static async getKepangkatanByUserId(userId: string) {
-        const kepangkatan = await KepangkatanRepository.FindByUserId(userId);
-        if (!kepangkatan) {
+        const kepangkatanList = await KepangkatanRepository.FindByUserId(userId);
+        if (!kepangkatanList || kepangkatanList.length === 0) {
             throw new Error("Kepangkatan not found for this user");
         }
-        return kepangkatan;
+        return kepangkatanList;
     }
 
-    static async updateKepangkatan(userId: string, data: KepangkatanSchema, file: MultipartFile) {
-        const kepangkatan = await KepangkatanRepository.FindByUserId(userId);
+    static async updateKepangkatan(id: string, data: KepangkatanSchema, file: MultipartFile) {
+        const kepangkatan = await KepangkatanRepository.FindById(id);
         if (!kepangkatan) {
-            throw new Error("Kepangkatan does not exist for this user");
+            throw new Error("Kepangkatan not found");
         }
 
-        if (kepangkatan.DokumenSK) {
-            await fs.promises.unlink(kepangkatan.DokumenSK.path);
-        }
-
-        const uploadDir = path.join(__dirname, `../../../public/dokumen/kepangkatan/${userId}`);
+        const uploadDir = path.join(__dirname, `../../../public/dokumen/kepangkatan/${kepangkatan.userId}`);
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -111,7 +107,7 @@ class KepangkatanService {
             extension: path.extname(file.filename).toLowerCase(),
         }
 
-        const updatedKepangkatan = await KepangkatanRepository.Update(userId, data, fileData);
+        const updatedKepangkatan = await KepangkatanRepository.Update(id, data, fileData);
         if (!updatedKepangkatan) {
             throw new Error("Failed to update kepangkatan");
         }
