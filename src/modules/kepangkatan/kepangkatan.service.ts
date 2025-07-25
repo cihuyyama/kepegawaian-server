@@ -42,9 +42,26 @@ class KepangkatanService {
         if (!updatedKepangkatan) {
             throw new Error("Failed to upload document SK");
         }
-
+        
         return updatedKepangkatan;
     }
+
+    static async streamDokumenSK(id: string) {
+            const kepangkatan = await KepangkatanRepository.FindById(id);
+            if (!kepangkatan) {
+                throw new Error("Kepangkatan not found");
+            }
+            
+            if (!kepangkatan.DokumenSK) {
+                throw new Error("Dokumen SK not found for this kepangkatan");
+            }
+
+            const filePath = kepangkatan.DokumenSK.path;
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`File not found at path: ${filePath}`);
+            }
+            return { filePath, document: kepangkatan.DokumenSK };
+        }
 
     static async getAllKepangkatan() {
         const kepangkatanList = await KepangkatanRepository.FindAll();

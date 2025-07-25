@@ -3,6 +3,7 @@ import { KepangkatanSchema } from "./kepangkatan.schema";
 import { MultipartFile } from "@fastify/multipart";
 import KepangkatanService from "./kepangkatan.service";
 import { errorFilter } from "../../middlewares/error-handling";
+import { createReadStream } from "fs";
 
 export async function createKepangkatanHandler(
     request: FastifyRequest<{
@@ -23,6 +24,34 @@ export async function createKepangkatanHandler(
             message: "Kepangkatan created successfully",
             status: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamDokumenHandler(
+    request: FastifyRequest<{
+        Params: { 
+            id: string;
+         };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { id } = request.params;
+        const { filePath, document } = await KepangkatanService.streamDokumenSK(id);
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`)
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }

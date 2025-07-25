@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./kepangkatan.schema";
-import { createKepangkatanHandler, deleteKepangkatanHandler, getAllKepangkatanHandler, getKepangkatanByIdHandler, updateKepangkatanHandler } from "./kepangkatan,controller";
+import { createKepangkatanHandler, deleteKepangkatanHandler, getAllKepangkatanHandler, getKepangkatanByIdHandler, getKepangkatanByUserIdHandler, updateKepangkatanHandler } from "./kepangkatan,controller";
 
 async function kepangkatanRoutes(app: FastifyInstance) {
     app.post(
@@ -39,6 +39,23 @@ async function kepangkatanRoutes(app: FastifyInstance) {
         },
         getKepangkatanByIdHandler
     );
+
+    app.put(
+        "/user/:userId",
+        {
+            schema: {
+                tags: ["Kepangkatan"],
+                params: {
+                    type: "object",
+                    properties: {
+                        userId: { type: "string" },
+                    },
+                },
+                body: $ref("kepangkatanSchema"),
+            }
+        },
+        getKepangkatanByUserIdHandler
+    )
 
     app.put(
         "/:id",

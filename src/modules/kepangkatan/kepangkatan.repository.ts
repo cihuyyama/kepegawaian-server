@@ -80,6 +80,8 @@ class KepangkatanRepository {
         return kepangkatan;
     }
 
+    
+
     static async Update(id: string, data: KepangkatanSchema, file: FileEntries) {
         const kepangkatan = await db.kepangkatan.update({
             where: {
