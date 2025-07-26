@@ -25,12 +25,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  UserInfo        UserInfo?
-  UnitKerja       UnitKerja[]       @relation("UserUnitKerja")
-  KepalaUnitKerja UnitKerja?        @relation("UserKepalaUnitKerja")
-  photoFile       File?             @relation("UserPhoto")
-  Kepangkatan     Kepangkatan[]
-  AnggotaKeluarga AnggotaKeluarga[]
+  UserInfo          UserInfo?
+  UnitKerja         UnitKerja[]         @relation("UserUnitKerja")
+  KepalaUnitKerja   UnitKerja?          @relation("UserKepalaUnitKerja")
+  photoFile         File?               @relation("UserPhoto")
+  Kepangkatan       Kepangkatan[]
+  AnggotaKeluarga   AnggotaKeluarga[]
+  RiwayatPendidikan RiwayatPendidikan[]
 }
 
 model UserInfo {
@@ -164,4 +165,17 @@ model AnggotaKeluarga {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("anggota_keluarga")
+}
+
+model RiwayatPendidikan {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  pendidikan    String
+  namaInstitusi String?   @map("nama_institusi")
+  tahunLulus    Int?      @map("tahun_lulus")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("riwayat_pendidikan")
 }
