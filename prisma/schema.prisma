@@ -32,6 +32,7 @@ model User {
   Kepangkatan       Kepangkatan[]
   AnggotaKeluarga   AnggotaKeluarga[]
   RiwayatPendidikan RiwayatPendidikan[]
+  JabatanFungsional JabatanFungsional[]
 }
 
 model UserInfo {
@@ -119,7 +120,9 @@ model File {
   userPhotoId String? @unique @map("user_photo_id")
   userPhoto   User?   @relation("UserPhoto", fields: [userPhotoId], references: [id], onDelete: Cascade)
 
-  Kepangkatan Kepangkatan?
+  Kepangkatan              Kepangkatan?
+  JabatanFungsional        JabatanFungsional?
+  DokumenRiwayatPendidikan DokumenRiwayatPendidikan?
 
   @@index([filename])
   @@index([createdAt])
@@ -171,11 +174,47 @@ model RiwayatPendidikan {
   id            String   @id @default(cuid())
   userId        String   @map("user_id")
   pendidikan    String
-  namaInstitusi String?   @map("nama_institusi")
-  tahunLulus    Int?      @map("tahun_lulus")
+  namaInstitusi String?  @map("nama_institusi")
+  tahunLulus    Int?     @map("tahun_lulus")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                     User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  DokumenRiwayatPendidikan DokumenRiwayatPendidikan?
+
   @@map("riwayat_pendidikan")
+}
+
+model DokumenRiwayatPendidikan {
+  id                  String   @id @default(cuid())
+  riwayatPendidikanId String   @unique @map("riwayat_pendidikan_id")
+  dokumenId           String   @unique @map("dokumen_id")
+  nama                String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  riwayatPendidikan RiwayatPendidikan @relation(fields: [riwayatPendidikanId], references: [id], onDelete: Cascade)
+  dokumen           File              @relation(fields: [dokumenId], references: [id], onDelete: Cascade)
+
+  @@map("dokumen_riwayat_pendidikan")
+}
+
+model JabatanFungsional {
+  id                String    @id @default(cuid())
+  userId            String    @map("user_id")
+  dokumenSKId       String?   @unique @map("dokumen_sk_id")
+  jabatanFungsional String
+  nomorSK           String?   @map("nomor_sk")
+  tanggalSK         DateTime? @map("tanggal_sk")
+  tmt               DateTime? @map("tmt")
+  jenis             String?   @map("jenis")
+  angkaKredit       Int?      @map("angka_kredit")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dokumenSK File? @relation(fields: [dokumenSKId], references: [id], onDelete: Cascade)
+
+  @@map("jabatan_fungsional")
 }

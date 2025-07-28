@@ -11,6 +11,8 @@ import { keluargaSchemas } from "./modules/anggota keluarga/keluarga.schema";
 import keluargaRoutes from "./modules/anggota keluarga/keluarga.route";
 import { riwayatPendidikanSchemas } from "./modules/riwayat pendidikan/pendidikan.schema";
 import riwayatPendidikanRoutes from "./modules/riwayat pendidikan/pendidikan.route";
+import { jabatanFungsionalSchemas } from "./modules/jabatan fungsional/jabatan-fungsional.schema";
+import jabatanFungsionalRoutes from "./modules/jabatan fungsional/jabatan-fungsional.route";
 
 export async function serverRoutes(app: FastifyInstance) {
     for (const schema of [
@@ -20,6 +22,7 @@ export async function serverRoutes(app: FastifyInstance) {
         ...kepangkatanSchemas,
         ...keluargaSchemas,
         ...riwayatPendidikanSchemas,
+        ...jabatanFungsionalSchemas,
     ]) {
         app.addSchema(schema)
     }
@@ -35,4 +38,5 @@ export async function serverRoutes(app: FastifyInstance) {
     app.register(kepangkatanRoutes, { prefix: '/api/v1/kepangkatan' })
     app.register(keluargaRoutes, { prefix: '/api/v1/keluarga' })
     app.register(riwayatPendidikanRoutes, { prefix: '/api/v1/pendidikan' })
+    app.register(jabatanFungsionalRoutes, { prefix: '/api/v1/jabatan-fungsional' })
 }
