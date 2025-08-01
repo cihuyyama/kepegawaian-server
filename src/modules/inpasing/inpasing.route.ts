@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./inpasing.schema";
-import { createInpasingHandler, getAllInpasingByUserIdHandler, getInpasingByIdHandler, updateInpasingHandler } from "./inpasing.controller";
+import { createInpasingHandler, deleteInpasingHandler, getAllInpasingByUserIdHandler, getInpasingByIdHandler, updateInpasingHandler } from "./inpasing.controller";
 
 async function inpasingRoutes(app: FastifyInstance) {
     app.post(
@@ -61,6 +61,22 @@ async function inpasingRoutes(app: FastifyInstance) {
             },
         },
         updateInpasingHandler
+    )
+
+    app.delete(
+        "/:id",
+        {
+            schema: {
+                tags: ["Inpasing"],
+                params: {
+                    type: "object",
+                    properties: {
+                        id: { type: "string" },
+                    },
+                },
+            },
+        },
+        deleteInpasingHandler
     )
 }
 
