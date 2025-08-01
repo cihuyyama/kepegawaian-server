@@ -1,18 +1,71 @@
 import { db } from "../../config/prisma";
-import { CreateRiwayatPendidikanSchema } from "./pendidikan.schema";
+import { FileEntries } from "../../utils/types";
+import { CreateDokumenRiwayatPendidikanSchema, CreateRiwayatPendidikanSchema } from "./pendidikan.schema";
 
 class RiwayatPendidikanRepository {
-    static async Insert (data: CreateRiwayatPendidikanSchema) {
+    static async Insert (data: CreateRiwayatPendidikanSchema, file?: FileEntries) {
         const result = await db.riwayatPendidikan.create({
-            data,
+            data: {
+                ...data,
+                ...((file) && {
+                    DokumenRiwayatPendidikan: {
+                        create: {
+                            dokumen: {
+                                create: {
+                                    filename: file.filename,
+                                    originalName: file.originalName,
+                                    mimetype: file.mimetype,
+                                    size: file.size,
+                                    extension: file.extension,
+                                    path: file.path
+                                }
+                            },
+                            namaDokumen: data.namaDokumen,
+                        }
+                    }
+                })
+            }
         });
         return result;
+    }
+
+    static async InsertDocument(file: FileEntries, pendidikanId: string, data: CreateDokumenRiwayatPendidikanSchema) {
+        const pendidikan = await db.riwayatPendidikan.update({
+            where: {
+                id: pendidikanId
+            },
+            data: {
+                DokumenRiwayatPendidikan: {
+                    create: {
+                        dokumen: {
+                            create: {
+                                filename: file.filename,
+                                originalName: file.originalName,
+                                mimetype: file.mimetype,
+                                size: file.size,
+                                extension: file.extension,
+                                path: file.path
+                            }
+                        },
+                        namaDokumen: data.namaDokumen,
+                    }
+                }
+            }
+        });
+        return pendidikan;
     }
 
     static async FindAllByUserId(userId: string) {
         const pendidikanList = await db.riwayatPendidikan.findMany({
             where: {
                 userId: userId
+            },
+            include: {
+                DokumenRiwayatPendidikan: {
+                    include: {
+                        dokumen: true
+                    }
+                }
             }
         });
         return pendidikanList;
@@ -22,9 +75,28 @@ class RiwayatPendidikanRepository {
         const pendidikan = await db.riwayatPendidikan.findUnique({
             where: {
                 id: id
+            },
+            include: {
+                DokumenRiwayatPendidikan: {
+                    include: {
+                        dokumen: true
+                    }
+                }
             }
         });
         return pendidikan;
+    }
+
+    static async FindDocumentById(documentId: string) {
+        const document = await db.dokumenRiwayatPendidikan.findUnique({
+            where: {
+                id: documentId
+            },
+            include: {
+                dokumen: true
+            }
+        });
+        return document;
     }
 
     static async Update(id: string, data: CreateRiwayatPendidikanSchema) {
@@ -44,6 +116,15 @@ class RiwayatPendidikanRepository {
             }
         });
         return pendidikan;
+    }
+
+    static async DeleteDocument(documentId: string) {
+        const document = await db.dokumenRiwayatPendidikan.delete({
+            where: {
+                id: documentId
+            }
+        });
+        return document;
     }
 }
 

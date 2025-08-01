@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify"
-import { CreateRiwayatPendidikanSchema } from "./pendidikan.schema"
+import { CreateDokumenRiwayatPendidikanSchema, CreateRiwayatPendidikanSchema } from "./pendidikan.schema"
 import RiwayatPendidikanService from "./pendidikan.service"
 import { errorFilter } from "../../middlewares/error-handling"
+import { MultipartFile } from "@fastify/multipart"
 
 export async function createRiwayatPendidikanHandler(
     request: FastifyRequest<{
@@ -11,11 +12,39 @@ export async function createRiwayatPendidikanHandler(
 ) {
     try {
         const data = request.body
-        const pendidikan = await RiwayatPendidikanService.createRiwayatPendidikan(data)
+        const file = request.body.file
+        const pendidikan = await RiwayatPendidikanService.createRiwayatPendidikan(data, file)
 
         reply.send({
             data: pendidikan,
             message: "Riwayat pendidikan berhasil dibuat",
+            code: 201,
+        })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function createDokumenRiwayatPendidikanHandler(
+    request: FastifyRequest<{
+        Body: CreateDokumenRiwayatPendidikanSchema
+        Params: {
+            pendidikanId: string
+        }
+        File: MultipartFile
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { pendidikanId } = request.params
+        const file = request.body.file
+        const data = request.body
+
+        const pendidikan = await RiwayatPendidikanService.createDokumenRiwayatPendidikan(file, pendidikanId, data)
+
+        reply.send({
+            data: pendidikan,
+            message: "Dokumen riwayat pendidikan berhasil dibuat",
             code: 201,
         })
     } catch (error) {
@@ -106,6 +135,28 @@ export async function deleteRiwayatPendidikanHandler(
         reply.send({
             data: pendidikan,
             message: "Riwayat pendidikan berhasil dihapus",
+            code: 200,
+        })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function deleteDokumenRiwayatPendidikanHandler(
+    request: FastifyRequest<{
+        Params: {
+            documentId: string
+        }
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { documentId } = request.params
+        const document = await RiwayatPendidikanService.deleteDokumenRiwayatPendidikan(documentId)
+
+        reply.send({
+            data: document,
+            message: "Dokumen riwayat pendidikan berhasil dihapus",
             code: 200,
         })
     } catch (error) {

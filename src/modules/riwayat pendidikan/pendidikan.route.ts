@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./pendidikan.schema";
-import { createRiwayatPendidikanHandler, deleteRiwayatPendidikanHandler, getAllRiwayatPendidikanByUserIdHandler, getRiwayatPendidikanByIdHandler, updateRiwayatPendidikanHandler } from "./pendidikan.controller";
+import { createDokumenRiwayatPendidikanHandler, createRiwayatPendidikanHandler, deleteDokumenRiwayatPendidikanHandler, deleteRiwayatPendidikanHandler, getAllRiwayatPendidikanByUserIdHandler, getRiwayatPendidikanByIdHandler, updateRiwayatPendidikanHandler } from "./pendidikan.controller";
 
 async function riwayatPendidikanRoutes(app: FastifyInstance) {
     app.post(
@@ -19,6 +19,17 @@ async function riwayatPendidikanRoutes(app: FastifyInstance) {
         },
         createRiwayatPendidikanHandler
     );
+
+    app.post(
+        "/dokumen",
+        {
+            schema: {
+                tags: ["Riwayat Pendidikan"],
+                body: $ref("createDokumenRiwayatPendidikanSchema"),
+            }
+        },
+        createDokumenRiwayatPendidikanHandler
+    )
 
     app.get(
         "/user/:userId",
@@ -83,6 +94,22 @@ async function riwayatPendidikanRoutes(app: FastifyInstance) {
             }
         },
         deleteRiwayatPendidikanHandler
+    );
+
+    app.delete(
+        "/dokumen/:documentId",
+        {
+            schema: {
+                tags: ["Riwayat Pendidikan"],
+                params: {
+                    type: "object",
+                    properties: {
+                        documentId: { type: "string" },
+                    },
+                },
+            }
+        },
+        deleteDokumenRiwayatPendidikanHandler
     );
 }
 

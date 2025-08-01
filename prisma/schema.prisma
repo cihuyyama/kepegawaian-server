@@ -189,7 +189,7 @@ model DokumenRiwayatPendidikan {
   id                  String   @id @default(cuid())
   riwayatPendidikanId String   @unique @map("riwayat_pendidikan_id")
   dokumenId           String   @unique @map("dokumen_id")
-  nama                String?
+  namaDokumen         String?  @map("nama_dokumen")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
