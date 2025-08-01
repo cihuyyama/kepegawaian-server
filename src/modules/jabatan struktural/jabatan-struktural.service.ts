@@ -10,7 +10,7 @@ class JabatanStrukturalService {
         let fileData: FileEntries | undefined;
 
         if (file) {
-            const uploadDir = path.join(__dirname, `../../../public/dokumen/inpasing/${data.userId}`);
+            const uploadDir = path.join(__dirname, `../../../public/dokumen/jabatan-struktural/${data.userId}`);
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
@@ -64,7 +64,7 @@ class JabatanStrukturalService {
         let fileData: FileEntries | undefined;
 
         if (file) {
-            const uploadDir = path.join(__dirname, `../../../public/dokumen/inpasing/${data.userId}`);
+            const uploadDir = path.join(__dirname, `../../../public/dokumen/jabatan-struktural/${data.userId}`);
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }

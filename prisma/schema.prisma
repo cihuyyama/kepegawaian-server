@@ -35,6 +35,7 @@ model User {
   JabatanFungsional JabatanFungsional[]
   Inpasing          Inpasing[]
   JabatanStruktural JabatanStruktural[]
+  Penempatan        Penempatan[]
 }
 
 model UserInfo {
@@ -127,6 +128,7 @@ model File {
   DokumenRiwayatPendidikan DokumenRiwayatPendidikan?
   Inpasing                 Inpasing?
   JabatanStruktural        JabatanStruktural?
+  Penempatan               Penempatan?
 
   @@index([filename])
   @@index([createdAt])
@@ -258,4 +260,21 @@ model JabatanStruktural {
   dokumenSK File? @relation(fields: [dokumenSKId], references: [id], onDelete: Cascade)
 
   @@map("jabatan_struktural")
+}
+
+model Penempatan {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  dokumenSKId String?   @unique @map("dokumen_sk_id")
+  unitKerja   String    @map("unit_kerja")
+  nomorSK     String?   @map("nomor_sk")
+  tanggalSK   DateTime? @map("tanggal_sk")
+  tmt         DateTime? @map("tmt")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dokumenSK File? @relation(fields: [dokumenSKId], references: [id], onDelete: Cascade)
+
+  @@map("penempatan")
 }
