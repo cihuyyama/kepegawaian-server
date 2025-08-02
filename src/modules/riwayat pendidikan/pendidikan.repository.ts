@@ -114,7 +114,7 @@ class RiwayatPendidikanRepository {
         return document;
     }
 
-    static async Update(id: string, data: CreateRiwayatPendidikanSchema) {
+    static async Update(id: string, data: CreateRiwayatPendidikanSchema, file?: FileEntries) {
         const pendidikan = await db.riwayatPendidikan.update({
             where: {
                 id: id
@@ -128,6 +128,22 @@ class RiwayatPendidikanRepository {
                 pendidikan: data.pendidikan.value,
                 namaInstitusi: data.namaInstitusi?.value,
                 tahunLulus: data.tahunLulus?.value ? Number(data.tahunLulus.value) : null,
+                ...(file && {
+                    DokumenRiwayatPendidikan: {
+                        create: {
+                            dokumen: {
+                                create: {
+                                    filename: file.filename,
+                                    originalName: file.originalName,
+                                    mimetype: file.mimetype,
+                                    size: file.size,
+                                    extension: file.extension,
+                                    path: file.path
+                                }
+                            }
+                        }
+                    }
+                })
             }
         });
         return pendidikan;

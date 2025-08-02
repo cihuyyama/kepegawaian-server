@@ -92,19 +92,48 @@ class RiwayatPendidikanService {
         return pendidikan;
     }
 
-    static async updateRiwayatPendidikan(id: string, data: CreateRiwayatPendidikanSchema) {
-        const pendidikan = await db.riwayatPendidikan.update({
-            where: {
-                id: id
-            },
-            data: {
-                pendidikan: data.pendidikan,
-                namaInstitusi: data.namaInstitusi,
-                tahunLulus: data.tahunLulus,
+    static async updateRiwayatPendidikan(id: string, data: CreateRiwayatPendidikanSchema, file?: MultipartFile) {
+        const pendidikan = await RiwayatPendidikanRepository.FindById(id);
+        if (!pendidikan) {
+            throw new Error("Riwayat Pendidikan not found");
+        }
+        if (pendidikan.DokumenRiwayatPendidikan && Array.isArray(pendidikan.DokumenRiwayatPendidikan)) {
+            for (const dokumen of pendidikan.DokumenRiwayatPendidikan) {
+                const filePath = dokumen.dokumen.path;
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
             }
-        });
+        }
 
-        return pendidikan;
+        let fileData: FileEntries | undefined
+        if (file) {
+            const uploadDir = path.join(__dirname, `../../../public/dokumen/riwayat-pendidikan/${data.userId}`);
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+
+            const clearFileName = file.filename.replace(/[^a-z0-9.]/gi, '_').toLowerCase();
+            const uniqueFilename = `${Date.now()}-${clearFileName}`;
+            const filePath = path.join(uploadDir, uniqueFilename);
+
+            await fs.promises.writeFile(filePath, await file.toBuffer());
+
+
+            fileData = {
+                filename: uniqueFilename,
+                originalName: file.filename,
+                path: filePath,
+                mimetype: file.mimetype,
+                size: file.file.bytesRead,
+                extension: path.extname(file.filename).toLowerCase(),
+            }
+        }
+
+        const updatedPendidikan = await RiwayatPendidikanRepository.Update(id, data, file && fileData);
+
+        return updatedPendidikan;
+        
     }
 
     static async deleteRiwayatPendidikan(id: string) {
