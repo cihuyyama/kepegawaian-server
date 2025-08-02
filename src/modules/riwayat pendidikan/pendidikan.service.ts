@@ -87,24 +87,15 @@ class RiwayatPendidikanService {
     }
 
     static async getAllRiwayatPendidikanByUserId(userId: string) {
-        const pendidikanList = await db.riwayatPendidikan.findMany({
-            where: {
-                userId: userId
-            }
-        });
-
-        return pendidikanList;
+        const pendidikan = await RiwayatPendidikanRepository.FindAllByUserId(userId);
+        return pendidikan;
     }
 
     static async getRiwayatPendidikanById(id: string) {
-        const pendidikan = await db.riwayatPendidikan.findUnique({
-            where: {
-                id: id
-            }
-        });
-
+        const pendidikan = await RiwayatPendidikanRepository.FindById(id);
         return pendidikan;
     }
+
 
     static async updateRiwayatPendidikan(id: string, data: CreateRiwayatPendidikanSchema, file?: MultipartFile) {
         const pendidikan = await RiwayatPendidikanRepository.FindById(id);
