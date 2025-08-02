@@ -21,11 +21,17 @@ async function riwayatPendidikanRoutes(app: FastifyInstance) {
     );
 
     app.post(
-        "/dokumen",
+        "/dokumen/:pendidikanId",
         {
             schema: {
                 tags: ["Riwayat Pendidikan"],
                 body: $ref("createDokumenRiwayatPendidikanSchema"),
+                params: {
+                    type: "object",
+                    properties: {
+                        pendidikanId: { type: "string" },
+                    },
+                },
             }
         },
         createDokumenRiwayatPendidikanHandler
