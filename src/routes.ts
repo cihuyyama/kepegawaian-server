@@ -17,6 +17,8 @@ import { inpasingSchemas } from "./modules/inpasing/inpasing.schema";
 import inpasingRoutes from "./modules/inpasing/inpasing.route";
 import { jabatanStrukturalSchemas } from "./modules/jabatan struktural/jabatan-struktural.schema";
 import jabatanStrukturalRoutes from "./modules/jabatan struktural/jabatan-struktural.route";
+import { penempatanSchemas } from "./modules/penempatan/penempatan.schema";
+import penempatanRoutes from "./modules/penempatan/penempatan.route";
 
 export async function serverRoutes(app: FastifyInstance) {
     for (const schema of [
@@ -29,6 +31,7 @@ export async function serverRoutes(app: FastifyInstance) {
         ...jabatanFungsionalSchemas,
         ...inpasingSchemas,
         ...jabatanStrukturalSchemas,
+        ...penempatanSchemas
     ]) {
         app.addSchema(schema)
     }
@@ -47,4 +50,5 @@ export async function serverRoutes(app: FastifyInstance) {
     app.register(jabatanFungsionalRoutes, { prefix: '/api/v1/jabatan-fungsional' })
     app.register(inpasingRoutes, { prefix: '/api/v1/inpasing' })
     app.register(jabatanStrukturalRoutes, { prefix: '/api/v1/jabatan-struktural' })
+    app.register(penempatanRoutes, { prefix: '/api/v1/penempatan' })
 }

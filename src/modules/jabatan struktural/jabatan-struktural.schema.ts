@@ -1,20 +1,16 @@
-import { MultipartFile } from "@fastify/multipart";
+import { MultipartFile, MultipartValue } from "@fastify/multipart";
 import { buildJsonSchemas } from "fastify-zod";
 import z from "zod";
 
 const createJabatanStrukturalSchema = z.object({
-    userId: z.string({
-        required_error: "User ID is required",
-    }),
-    namaJabatan: z.string({
-        required_error: "Nama Jabatan is required",
-    }),
-    nomorSK: z.string().optional(),
-    periodeMenjabat: z.string().optional(),
-    skPemberhentian: z.string().optional(),
-    tmtPemberhentian: z.string().optional(),
-    tunjanganTetap: z.string().optional(),
-    tunjanganVariabel: z.string().optional(),
+    userId: z.custom<MultipartValue<string>>(),
+    namaJabatan: z.custom<MultipartValue<string>>(),
+    nomorSK: z.custom<MultipartValue<string>>().optional(),
+    periodeMenjabat: z.custom<MultipartValue<string>>().optional(),
+    skPemberhentian: z.custom<MultipartValue<string>>().optional(),
+    tmtPemberhentian: z.custom<MultipartValue<string>>().optional(),
+    tunjanganTetap: z.custom<MultipartValue<string>>().optional(),
+    tunjanganVariabel: z.custom<MultipartValue<string>>().optional(),
     file: z.custom<MultipartFile>()
 })
 

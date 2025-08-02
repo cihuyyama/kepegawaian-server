@@ -1,23 +1,21 @@
+import { create } from "domain";
 import { db } from "../../config/prisma";
 import { FileEntries } from "../../utils/types";
-import { CreateJabatanStrukturalSchema } from "./jabatan-struktural.schema";
+import { CreatePenempatanSchema } from "./penempatan.schema";
 
-class JabatanStrukturalRepository {
-    static async Insert(data: CreateJabatanStrukturalSchema, file?: FileEntries) {
-        const jabatanStruktural = await db.jabatanStruktural.create({
+class PenempatanRepository {
+    static async Insert(data: CreatePenempatanSchema, file?: FileEntries) {
+        const penempatan = await db.penempatan.create({
             data: {
                 user: {
                     connect: {
                         id: data.userId.value
                     }
                 },
-                namaJabatan: data.namaJabatan.value,
+                unitKerja: data.unitKerja.value,
                 nomorSK: data.nomorSK?.value,
-                periodeMenjabat: data.periodeMenjabat?.value,
-                skPemberhentian: data.skPemberhentian?.value,
-                tmtPemberhentian: data.tmtPemberhentian?.value,
-                tunjanganTetap: data.tunjanganTetap?.value,
-                tunjanganVariabel: data.tunjanganVariabel?.value,
+                tanggalSK: data.tanggalSK?.value ? new Date(data.tanggalSK.value) : undefined,
+                tmt: data.tmt?.value ? new Date(data.tmt.value) : undefined,
                 ...((file) && {
                     dokumenSK: {
                         create: {
@@ -32,11 +30,32 @@ class JabatanStrukturalRepository {
                 })
             }
         });
-        return jabatanStruktural;
+        return penempatan;
     }
 
-    static async getAllByUserId(userId: string) {
-        const jabatanStrukturalList = await db.jabatanStruktural.findMany({
+    static async InsertDocument(penempatanId: string, file: FileEntries) {
+        const penempatan = await db.penempatan.update({
+            where: {
+                id: penempatanId
+            },
+            data: {
+                dokumenSK: {
+                    create: {
+                        filename: file.filename,
+                        originalName: file.originalName,
+                        mimetype: file.mimetype,
+                        size: file.size,
+                        extension: file.extension,
+                        path: file.path,
+                    }
+                }
+            }
+        });
+        return penempatan;
+    }
+
+    static async FindAllByUserId(userId: string) {
+        const penempatanList = await db.penempatan.findMany({
             where: {
                 userId: userId
             },
@@ -44,11 +63,11 @@ class JabatanStrukturalRepository {
                 dokumenSK: true
             }
         });
-        return jabatanStrukturalList;
+        return penempatanList;
     }
 
     static async FindById(id: string) {
-        const jabatanStruktural = await db.jabatanStruktural.findUnique({
+        const penempatan = await db.penempatan.findUnique({
             where: {
                 id: id
             },
@@ -56,11 +75,11 @@ class JabatanStrukturalRepository {
                 dokumenSK: true
             }
         });
-        return jabatanStruktural;
+        return penempatan;
     }
 
-    static async Update(id: string, data: CreateJabatanStrukturalSchema, file?: FileEntries) {
-        const jabatanStruktural = await db.jabatanStruktural.update({
+    static async Update(id: string, data: CreatePenempatanSchema, file?: FileEntries) {
+        const penempatan = await db.penempatan.update({
             where: {
                 id: id
             },
@@ -70,18 +89,15 @@ class JabatanStrukturalRepository {
                         id: data.userId.value
                     }
                 },
-                namaJabatan: data.namaJabatan.value,
+                unitKerja: data.unitKerja.value,
                 nomorSK: data.nomorSK?.value,
-                periodeMenjabat: data.periodeMenjabat?.value,
-                skPemberhentian: data.skPemberhentian?.value,
-                tmtPemberhentian: data.tmtPemberhentian?.value,
-                tunjanganTetap: data.tunjanganTetap?.value,
-                tunjanganVariabel: data.tunjanganVariabel?.value,
+                tanggalSK: data.tanggalSK?.value ? new Date(data.tanggalSK.value) : undefined,
+                tmt: data.tmt?.value ? new Date(data.tmt.value) : undefined,
                 ...((file) && {
                     dokumenSK: {
                         upsert: {
                             where: {
-                                JabatanStruktural: {
+                                Penempatan: {
                                     id: id
                                 }
                             },
@@ -106,21 +122,17 @@ class JabatanStrukturalRepository {
                 })
             }
         });
-        return jabatanStruktural;
+        return penempatan;
     }
 
     static async Delete(id: string) {
-        const jabatanStruktural = await db.jabatanStruktural.delete({
+        const penempatan = await db.penempatan.delete({
             where: {
                 id: id
-            },
-            include: {
-                dokumenSK: true
             }
         });
-
-        return jabatanStruktural;
+        return penempatan;
     }
 }
 
-export default JabatanStrukturalRepository;
+export default PenempatanRepository;

@@ -36,6 +36,7 @@ model User {
   Inpasing          Inpasing[]
   JabatanStruktural JabatanStruktural[]
   Penempatan        Penempatan[]
+  Kendaraan         Kendaraan[]
 }
 
 model UserInfo {
@@ -128,7 +129,8 @@ model File {
   DokumenRiwayatPendidikan DokumenRiwayatPendidikan?
   Inpasing                 Inpasing?
   JabatanStruktural        JabatanStruktural?
-  Penempatan               Penempatan?
+  Penempatan               Penempatan?               @relation("DokumenPenempatan")
+  Kendaraan                Kendaraan?
 
   @@index([filename])
   @@index([createdAt])
@@ -274,7 +276,24 @@ model Penempatan {
   updatedAt   DateTime  @updatedAt
 
   user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  dokumenSK File? @relation(fields: [dokumenSKId], references: [id], onDelete: Cascade)
+  dokumenSK File? @relation("DokumenPenempatan", fields: [dokumenSKId], references: [id])
 
   @@map("penempatan")
+}
+
+model Kendaraan {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  dokumenId      String?  @unique @map("dokumen_id")
+  namaPemilik    String?  @map("nama_pemilik")
+  nomorKendaraan String?  @map("nomor_kendaraan")
+  merek          String?  @map("merek")
+  jenis          String?  @map("jenis")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dokumen File? @relation(fields: [dokumenId], references: [id], onDelete: Cascade)
+
+  @@map("kendaraan")
 }

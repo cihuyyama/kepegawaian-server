@@ -1,3 +1,4 @@
+import path from "path";
 import { db } from "../../config/prisma";
 import { FileEntries } from "../../utils/types";
 import { CreateInpasingSchema } from "./inpasing.schema";
@@ -6,20 +7,24 @@ class InpasingRepository {
     static async Insert(data: CreateInpasingSchema, file?: FileEntries) {
         const inpasing = await db.inpasing.create({
             data: {
-                ...data,
+                user: {
+                    connect: {
+                        id: data.userId.value
+                    }
+                },
+                nomorSK: data.nomorSK?.value,
+                tanggalSK: data.tanggalSK ? new Date(data.tanggalSK.value) : undefined,
+                tmt: data.tmt ? new Date(data.tmt.value) : undefined,
+                kepangkatan: data.kepangkatan.value,
                 ...((file) && {
-                    DokumenInpasing: {
+                    dokumenSK: {
                         create: {
-                            dokumen: {
-                                create: {
-                                    filename: file.filename,
-                                    originalName: file.originalName,
-                                    mimetype: file.mimetype,
-                                    size: file.size,
-                                    extension: file.extension,
-                                   
-                                }
-                            }
+                            filename: file.filename,
+                            originalName: file.originalName,
+                            mimetype: file.mimetype,
+                            size: file.size,
+                            extension: file.extension,
+                            path: file.path,
                         }
                     }
                 })
@@ -58,18 +63,38 @@ class InpasingRepository {
                 id: id
             },
             data: {
-                ...data,
+                user: {
+                    connect: {
+                        id: data.userId.value
+                    }
+                },
+                nomorSK: data.nomorSK?.value,
+                tanggalSK: data.tanggalSK ? new Date(data.tanggalSK.value) : undefined,
+                tmt: data.tmt ? new Date(data.tmt.value) : undefined,
+                kepangkatan: data.kepangkatan.value,
                 ...((file) && {
-                    DokumenInpasing: {
-                        create: {
-                            dokumen: {
-                                create: {
-                                    filename: file.filename,
-                                    originalName: file.originalName,
-                                    mimetype: file.mimetype,
-                                    size: file.size,
-                                    extension: file.extension,
+                    dokumenSK: {
+                        upsert: {
+                            where: {
+                                Inpasing: {
+                                    id: id
                                 }
+                            },
+                            create: {
+                                filename: file.filename,
+                                originalName: file.originalName,
+                                mimetype: file.mimetype,
+                                size: file.size,
+                                extension: file.extension,
+                                path: file.path,
+                            },
+                            update: {
+                                filename: file.filename,
+                                originalName: file.originalName,
+                                mimetype: file.mimetype,
+                                size: file.size,
+                                extension: file.extension,
+                                path: file.path,
                             }
                         }
                     }
