@@ -72,6 +72,20 @@ class RiwayatPendidikanService {
         return updatedPendidikan;
     }
 
+    static async streamDokumenRiwayatPendidikan(dokumenId: string) {
+        const document = await RiwayatPendidikanRepository.FindDocumentById(dokumenId);
+        if (!document) {
+            throw new Error("Dokumen Riwayat Pendidikan not found");
+        }
+
+        const filePath = document.dokumen.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error("File not found");
+        }
+
+        return { filePath, document: document.dokumen };
+    }
+
     static async getAllRiwayatPendidikanByUserId(userId: string) {
         const pendidikanList = await db.riwayatPendidikan.findMany({
             where: {

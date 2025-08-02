@@ -3,6 +3,7 @@ import { CreateDokumenRiwayatPendidikanSchema, CreateRiwayatPendidikanSchema } f
 import RiwayatPendidikanService from "./pendidikan.service"
 import { errorFilter } from "../../middlewares/error-handling"
 import { MultipartFile } from "@fastify/multipart"
+import { createReadStream } from "fs"
 
 export async function createRiwayatPendidikanHandler(
     request: FastifyRequest<{
@@ -47,6 +48,33 @@ export async function createDokumenRiwayatPendidikanHandler(
             message: "Dokumen riwayat pendidikan berhasil dibuat",
             code: 201,
         })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function streamDokumenRiwayatPendidikanHandler(
+    request: FastifyRequest<{
+        Params: { documentId: string }
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { documentId } = request.params
+        const { filePath, document } = await RiwayatPendidikanService.streamDokumenRiwayatPendidikan(documentId)
+
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            })
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`)
+
+        return reply.send(createReadStream(filePath))
     } catch (error) {
         errorFilter(error, reply)
     }
