@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateJabatanStrukturalSchema } from "./jabatan-struktural.schema";
 import JabatanStrukturalService from "./jabatan-struktural.service";
 import { errorFilter } from "../../middlewares/error-handling";
+import { createReadStream } from "fs";
 
 export async function createJabatanStrukturalHandler(
     request: FastifyRequest<{
@@ -19,6 +20,33 @@ export async function createJabatanStrukturalHandler(
             message: "Jabatan Struktural created successfully",
             code: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamDokumenSKHandler(
+    request: FastifyRequest<{
+        Params: { dokumenId: string };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { dokumenId } = request.params;
+        const { filePath, document } = await JabatanStrukturalService.streamDokumenSK(dokumenId);
+
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`)
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }

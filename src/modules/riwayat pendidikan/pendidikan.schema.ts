@@ -3,13 +3,11 @@ import { buildJsonSchemas } from "fastify-zod";
 import z from "zod";
 
 const createDokumenRiwayatPendidikanSchema = z.object({
-    pendidikanId: z.string({
-        required_error: "Pendidikan ID is required",
-    }),
-    pendidikan: z.string().optional(),
-    namaInstitusi: z.string().optional(),
-    tahunLulus: z.number().optional(),
-    namaDokumen: z.string().optional(),
+    pendidikanId: z.custom<MultipartValue<string>>(),
+    pendidikan: z.custom<MultipartValue<string>>().optional(),
+    namaInstitusi: z.custom<MultipartValue<string>>().optional(),
+    tahunLulus: z.custom<MultipartValue<string>>().optional(),
+    namaDokumen: z.custom<MultipartValue<string>>().optional(),
     file: z.custom<MultipartFile>(),
 })
 

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateKendaraanSchema } from "./kendaraan.schema";
 import KendaraanService from "./kendaraan.service";
 import { errorFilter } from "../../middlewares/error-handling";
+import { createReadStream } from "fs";
 
 export async function createKendaraanHandler(
     request: FastifyRequest<{
@@ -19,6 +20,33 @@ export async function createKendaraanHandler(
             message: "Kendaraan created successfully",
             code: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamKendaraanDocumentHandler(
+    request: FastifyRequest<{
+        Params: { dokumenId: string };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { dokumenId } = request.params;
+        const { filePath, document } = await KendaraanService.streamDokumenKendaraan(dokumenId);
+
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`);
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }

@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createKendaraanHandler, deleteKendaraanHandler, getAllKendaraanByUserIdHandler, getKendaraanByIdHandler, updateKendaraanHandler } from "./kendaraan.controller";
+import { createKendaraanHandler, deleteKendaraanHandler, getAllKendaraanByUserIdHandler, getKendaraanByIdHandler, streamKendaraanDocumentHandler, updateKendaraanHandler } from "./kendaraan.controller";
 import { $ref } from "./kendaraan.schema";
 
 async function kendaraanRoutes(app: FastifyInstance) {
@@ -12,6 +12,22 @@ async function kendaraanRoutes(app: FastifyInstance) {
             },
         },
         createKendaraanHandler
+    )
+
+    app.get(
+        "/dokumen/:dokumenId",
+        {
+            schema: {
+                tags: ["Kendaraan"],
+                params: {
+                    type: "object",
+                    properties: {
+                        dokumenId: { type: "string" },
+                    },
+                },
+            }
+        },
+        streamKendaraanDocumentHandler
     )
 
     app.get(

@@ -62,7 +62,7 @@ class RiwayatPendidikanRepository {
                                 path: file.path
                             }
                         },
-                        namaDokumen: data.namaDokumen,
+                        namaDokumen: data.namaDokumen?.value,
                     }
                 }
             }

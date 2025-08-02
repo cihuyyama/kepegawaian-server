@@ -36,6 +36,23 @@ class InpasingService {
         return inpasing;
     }
 
+    static async streamInpasingDocument(id: string) {
+        const inpasing = await InpasingRepository.FindById(id);
+        if (!inpasing) {
+            throw new Error("Inpasing not found");
+        }
+
+        if (!inpasing.dokumenSK) {
+            throw new Error("Dokumen SK not found for this inpasing");
+        }
+
+        const filePath = inpasing.dokumenSK.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document: inpasing.dokumenSK };
+    }
+
     static async getAllInpasingByUserId(userId: string) {
         const inpasingList = await InpasingRepository.getAllByUserId(userId);
         return inpasingList;

@@ -36,6 +36,23 @@ class KendaraanService {
         return kendaraan;
     }
 
+    static async streamDokumenKendaraan(id: string) {
+        const kendaraan = await KendaraanRepository.FindById(id);
+        if (!kendaraan) {
+            throw new Error("Kendaraan not found");
+        }
+
+        if (!kendaraan.dokumen) {
+            throw new Error("Dokumen not found for this kendaraan");
+        }
+
+        const filePath = kendaraan.dokumen.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document: kendaraan.dokumen };
+    }
+
     static async getAllKendaraanByUserId(userId: string) {
         const kendaraanList = await KendaraanRepository.FindAllByUserId(userId);
         return kendaraanList;

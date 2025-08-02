@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createPenempatanHandler, deletePenempatanHandler, getAllPenempatanByUserIdHandler, getPenempatanByIdHandler, updatePenempatanHandler } from "./penempatan.controller";
+import { createPenempatanHandler, deletePenempatanHandler, getAllPenempatanByUserIdHandler, getPenempatanByIdHandler, streamPenempatanDocumentHandler, updatePenempatanHandler } from "./penempatan.controller";
 import { $ref } from "./penempatan.schema";
 
 async function penempatanRoutes(app: FastifyInstance) {
@@ -12,6 +12,22 @@ async function penempatanRoutes(app: FastifyInstance) {
             }
         },
         createPenempatanHandler
+    );
+
+    app.get(
+        "/dokumen/:dokumenId",
+        {
+            schema: {
+                tags: ["Penempatan"],
+                params: {
+                    type: "object",
+                    properties: {
+                        dokumenId: { type: "string" },
+                    },
+                },
+            }
+        },
+        streamPenempatanDocumentHandler
     );
 
     app.get(

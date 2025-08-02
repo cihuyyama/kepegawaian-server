@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./jabatan-struktural.schema";
-import { createJabatanStrukturalHandler, deleteJabatanStrukturalHandler, getAllJabatanStrukturalByUserIdHandler, getJabatanStrukturalByIdHandler, updateJabatanStrukturalHandler } from "./jabatan-struktural.controller";
+import { createJabatanStrukturalHandler, deleteJabatanStrukturalHandler, getAllJabatanStrukturalByUserIdHandler, getJabatanStrukturalByIdHandler, streamDokumenSKHandler, updateJabatanStrukturalHandler } from "./jabatan-struktural.controller";
 
 async function jabatanStrukturalRoutes(app: FastifyInstance) {
     app.post(
@@ -12,6 +12,22 @@ async function jabatanStrukturalRoutes(app: FastifyInstance) {
             }
         },
         createJabatanStrukturalHandler
+    );
+
+    app.get(
+        "/dokumen/:dokumenId",
+        {
+            schema: {
+                tags: ["Jabatan Struktural"],
+                params: {
+                    type: "object",
+                    properties: {
+                        dokumenId: { type: "string" },
+                    },
+                },
+            }
+        },
+        streamDokumenSKHandler
     );
 
     app.get(

@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { CreatePenempatanSchema } from "./penempatan.schema";
 import PenempatanService from "./penempatan.service";
 import { errorFilter } from "../../middlewares/error-handling";
+import { createReadStream } from "fs";
 
 export async function createPenempatanHandler(
     request: FastifyRequest<{
@@ -19,6 +20,33 @@ export async function createPenempatanHandler(
             message: "Penempatan created successfully",
             code: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamPenempatanDocumentHandler(
+    request: FastifyRequest<{
+        Params: { dokumenId: string };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { dokumenId } = request.params;
+        const { filePath, document } = await PenempatanService.streamDokumenSK(dokumenId);
+
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`);
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }

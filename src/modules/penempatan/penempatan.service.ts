@@ -36,6 +36,23 @@ class PenempatanService {
         return penempatan;
     }
 
+    static async streamDokumenSK(id: string) {
+        const penempatan = await PenempatanRepository.FindById(id);
+        if (!penempatan) {
+            throw new Error("Penempatan not found");
+        }
+
+        if (!penempatan.dokumenSK) {
+            throw new Error("Dokumen SK not found for this penempatan");
+        }
+
+        const filePath = penempatan.dokumenSK.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document: penempatan.dokumenSK };
+    }
+
     static async getAllPenempatanByUserId(userId: string) {
         const penempatanList = await PenempatanRepository.FindAllByUserId(userId);
         return penempatanList;

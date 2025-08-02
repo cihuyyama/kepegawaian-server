@@ -36,6 +36,23 @@ class JabatanStrukturalService {
         return jabatanStruktural;
     }
 
+    static async streamDokumenSK(id: string) {
+        const jabatanStruktural = await JabatanStrukturalRepository.FindById(id);
+        if (!jabatanStruktural) {
+            throw new Error("Jabatan Struktural not found");
+        }
+
+        if (!jabatanStruktural.dokumenSK) {
+            throw new Error("Dokumen SK not found for this jabatan struktural");
+        }
+
+        const filePath = jabatanStruktural.dokumenSK.path;
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`File not found at path: ${filePath}`);
+        }
+        return { filePath, document: jabatanStruktural.dokumenSK };
+    }
+
     static async getAllJabatanStrukturalByUserId(userId: string) {
         const jabatanStrukturalList = await JabatanStrukturalRepository.getAllByUserId(userId);
         return jabatanStrukturalList;

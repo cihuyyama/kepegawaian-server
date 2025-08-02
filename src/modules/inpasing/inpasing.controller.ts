@@ -3,6 +3,7 @@ import { CreateInpasingSchema } from "./inpasing.schema";
 import InpasingService from "./inpasing.service";
 import { errorFilter } from "../../middlewares/error-handling";
 import { MultipartFile } from "@fastify/multipart";
+import { createReadStream } from "fs";
 
 export async function createInpasingHandler(
     request: FastifyRequest<{
@@ -21,6 +22,33 @@ export async function createInpasingHandler(
             message: "Inpasing created successfully",
             code: 201,
         });
+    } catch (error) {
+        errorFilter(error, reply);
+    }
+}
+
+export async function streamInpasingDocumentHandler(
+    request: FastifyRequest<{
+        Params: { dokumenId: string };
+    }>,
+    reply: FastifyReply
+) {
+    try {
+        const { dokumenId } = request.params;
+        const { filePath, document } = await InpasingService.streamInpasingDocument(dokumenId);
+
+        if (!filePath || !document) {
+            return reply.status(404).send({
+                message: "Document not found",
+                status: 404,
+            });
+        }
+
+        reply
+            .header("Content-Type", document.mimetype)
+            .header("Content-Disposition", `inline; filename="${document.originalName}"`)
+
+        return reply.send(createReadStream(filePath));
     } catch (error) {
         errorFilter(error, reply);
     }
