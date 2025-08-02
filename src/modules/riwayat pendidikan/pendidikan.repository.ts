@@ -6,8 +6,23 @@ class RiwayatPendidikanRepository {
     static async Insert (data: CreateRiwayatPendidikanSchema, file?: FileEntries) {
         const result = await db.riwayatPendidikan.create({
             data: {
-                ...data,
-                ...((file) && {
+                user: {
+                    connect: {
+                        id: data.userId.value
+                    }
+                },
+                pendidikan: data.pendidikan.value,
+                namaInstitusi: data.namaInstitusi?.value,
+                tahunLulus: data.tahunLulus?.value,
+            }
+        });
+
+        if (file) {
+            await db.riwayatPendidikan.update({
+                where: {
+                    id: result.id
+                },
+                data: {
                     DokumenRiwayatPendidikan: {
                         create: {
                             dokumen: {
@@ -20,12 +35,12 @@ class RiwayatPendidikanRepository {
                                     path: file.path
                                 }
                             },
-                            namaDokumen: data.namaDokumen,
+                            namaDokumen: data.namaDokumen?.value,
                         }
                     }
-                })
-            }
-        });
+                }
+            });
+        }
         return result;
     }
 
@@ -104,7 +119,16 @@ class RiwayatPendidikanRepository {
             where: {
                 id: id
             },
-            data: data
+            data: {
+                user: {
+                    connect: {
+                        id: data.userId.value
+                    }
+                },
+                pendidikan: data.pendidikan.value,
+                namaInstitusi: data.namaInstitusi?.value,
+                tahunLulus: data.tahunLulus?.value,
+            }
         });
         return pendidikan;
     }

@@ -1,4 +1,4 @@
-import { MultipartFile } from "@fastify/multipart";
+import { MultipartFile, MultipartValue } from "@fastify/multipart";
 import { buildJsonSchemas } from "fastify-zod";
 import z from "zod";
 
@@ -14,15 +14,11 @@ const createDokumenRiwayatPendidikanSchema = z.object({
 })
 
 const createRiwayatPendidikanSchema = z.object({
-    userId: z.string({
-        required_error: "User ID is required",
-    }),
-    pendidikan: z.string({
-        required_error: "Pendidikan is required",
-    }),
-    namaInstitusi: z.string().optional(),
-    tahunLulus: z.number().optional(),
-    namaDokumen: z.string().optional(),
+    userId: z.custom<MultipartValue<string>>(),
+    pendidikan: z.custom<MultipartValue<string>>(),
+    namaInstitusi: z.custom<MultipartValue<string>>().optional(),
+    tahunLulus: z.custom<MultipartValue<number>>().optional(),
+    namaDokumen: z.custom<MultipartValue<string>>().optional(),
     file: z.custom<MultipartFile>().optional(),
 })
 
@@ -32,7 +28,6 @@ export type CreateDokumenRiwayatPendidikanSchema = z.infer<typeof createDokumenR
 export const { schemas: riwayatPendidikanSchemas, $ref } = buildJsonSchemas(
     {
         createRiwayatPendidikanSchema,
-        createDokumenRiwayatPendidikanSchema,
     },
     {
         $id: "RiwayatPendidikanSchema",

@@ -63,7 +63,7 @@ async function kepangkatanRoutes(app: FastifyInstance) {
         streamDokumenHandler
     )
 
-    app.put(
+    app.get(
         "/user/:userId",
         {
             schema: {
@@ -74,7 +74,6 @@ async function kepangkatanRoutes(app: FastifyInstance) {
                         userId: { type: "string" },
                     },
                 },
-                body: $ref("kepangkatanSchema"),
             }
         },
         getKepangkatanByUserIdHandler
