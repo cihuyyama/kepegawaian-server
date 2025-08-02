@@ -69,9 +69,6 @@ class JabatanFungsionalService {
 
     static async getJabatanFungsionalByUserId(userId: string) {
         const jabatanFungsional = await JabatanFungsionalRepository.FindByUserId(userId);
-        if (!jabatanFungsional || jabatanFungsional.length === 0) {
-            throw new Error("Jabatan Fungsional not found for this user");
-        }
         return jabatanFungsional;
     }
 
