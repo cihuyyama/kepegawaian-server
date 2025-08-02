@@ -16,7 +16,7 @@ class KendaraanRepository {
                 merek: data.merek?.value,
                 jenis: data.jenis?.value,
                 ...((file) && {
-                    dokumenKendaraan: {
+                    dokumen: {
                         create: {
                             filename: file.filename,
                             originalName: file.originalName,
