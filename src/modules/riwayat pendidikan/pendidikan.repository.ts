@@ -13,7 +13,7 @@ class RiwayatPendidikanRepository {
                 },
                 pendidikan: data.pendidikan.value,
                 namaInstitusi: data.namaInstitusi?.value,
-                tahunLulus: data.tahunLulus?.value,
+                tahunLulus: data.tahunLulus?.value ? Number(data.tahunLulus.value) : null,
             }
         });
 
@@ -127,7 +127,7 @@ class RiwayatPendidikanRepository {
                 },
                 pendidikan: data.pendidikan.value,
                 namaInstitusi: data.namaInstitusi?.value,
-                tahunLulus: data.tahunLulus?.value,
+                tahunLulus: data.tahunLulus?.value ? Number(data.tahunLulus.value) : null,
             }
         });
         return pendidikan;

@@ -17,7 +17,7 @@ const createRiwayatPendidikanSchema = z.object({
     userId: z.custom<MultipartValue<string>>(),
     pendidikan: z.custom<MultipartValue<string>>(),
     namaInstitusi: z.custom<MultipartValue<string>>().optional(),
-    tahunLulus: z.custom<MultipartValue<number>>().optional(),
+    tahunLulus: z.custom<MultipartValue<string>>().optional(),
     namaDokumen: z.custom<MultipartValue<string>>().optional(),
     file: z.custom<MultipartFile>().optional(),
 })
@@ -28,6 +28,7 @@ export type CreateDokumenRiwayatPendidikanSchema = z.infer<typeof createDokumenR
 export const { schemas: riwayatPendidikanSchemas, $ref } = buildJsonSchemas(
     {
         createRiwayatPendidikanSchema,
+        createDokumenRiwayatPendidikanSchema,
     },
     {
         $id: "RiwayatPendidikanSchema",
