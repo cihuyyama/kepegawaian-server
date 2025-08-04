@@ -49,6 +49,8 @@ model UserInfo {
   TempatLahir         String?   @map("tempat_lahir")
   TanggalLahir        DateTime? @map("tanggal_lahir")
   Alamat              String?
+  agama               String?
+  golonganDarah       String?   @map("golongan_darah")
   Phone               String?
   NBM                 String?   @map("nbm")
   NIDN                String?   @map("nidn")

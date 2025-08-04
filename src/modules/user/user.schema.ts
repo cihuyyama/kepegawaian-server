@@ -10,6 +10,8 @@ const createUserInfoSchema = z.object({
     TempatLahir: z.string().optional(),
     TanggalLahir: z.string().optional(),
     Alamat: z.string().optional(),
+    agama: z.string().optional(),
+    golonganDarah: z.string().optional(),
     Phone: z.string().optional(),
     NBM: z.string().optional(),
     NIDN: z.string().optional(),
