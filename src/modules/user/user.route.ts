@@ -61,7 +61,8 @@ async function userRoutes(server: FastifyInstance) {
             schema: {
                 tags: ["User"],
                 summary: "Get all users by Kaprodi",
-            }
+            },
+            preHandler: [server.authenticate]
         },
         getAllUsersByKaprodiHandler
     )
