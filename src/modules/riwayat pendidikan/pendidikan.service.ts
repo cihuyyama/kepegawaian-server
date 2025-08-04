@@ -156,9 +156,9 @@ class RiwayatPendidikanService {
             }
         } else if (pendidikan.DokumenRiwayatPendidikan) {
             // Handle case when it's a single document object
-            const dokumen = pendidikan.DokumenRiwayatPendidikan;
-            const filePath = dokumen.dokumen.path;
-            if (fs.existsSync(filePath)) {
+            const dokumen = pendidikan.DokumenRiwayatPendidikan as any;
+            const filePath = dokumen.dokumen?.path;
+            if (filePath && fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath);
             }
         }
