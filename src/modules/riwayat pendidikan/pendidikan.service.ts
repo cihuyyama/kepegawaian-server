@@ -10,7 +10,7 @@ class RiwayatPendidikanService {
     static async createRiwayatPendidikan(data: CreateRiwayatPendidikanSchema, file?: MultipartFile) {
         let fileData: FileEntries | undefined
         if (file) {
-            const uploadDir = path.join(__dirname, `../../../public/dokumen/riwayat-pendidikan/${data.userId}`);
+            const uploadDir = path.join(__dirname, `../../../public/dokumen/riwayat-pendidikan/${data.userId.value}`);
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
@@ -179,7 +179,9 @@ class RiwayatPendidikanService {
             fs.unlinkSync(filePath);
         }
 
-        return document;
+        const deletedDocument = await RiwayatPendidikanRepository.DeleteDocument(documentId);
+
+        return deletedDocument;
     }
 }
 
