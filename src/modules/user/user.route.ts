@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./user.schema";
-import { deleteUserHandler, getAllUsersHandler, getUserByIdHandler, getUserByTokenHandler, loginUserHandler, logoutUserHandler, registerUserHandler, streamPhotoHandler, updateUserHandler, updateUserPhotoHandler } from "./user.controller";
+import { deleteUserHandler, getAllUsersByKaprodiHandler, getAllUsersHandler, getUserByIdHandler, getUserByTokenHandler, loginUserHandler, logoutUserHandler, registerUserHandler, streamPhotoHandler, updateUserHandler, updateUserPhotoHandler } from "./user.controller";
 
 async function authRoutes(server: FastifyInstance) {
     server.post(
@@ -53,6 +53,17 @@ async function userRoutes(server: FastifyInstance) {
             }
         },
         getAllUsersHandler
+    )
+
+    server.get(
+        "/kaprodi",
+        {
+            schema: {
+                tags: ["User"],
+                summary: "Get all users by Kaprodi",
+            }
+        },
+        getAllUsersByKaprodiHandler
     )
 
     server.get(

@@ -108,6 +108,29 @@ class UserRepository {
         return users;
     }
 
+    static async FindAllByKaprodi(kaprodiId: string) {
+        const kaprodi = await db.user.findMany({
+            where: {
+                KepalaUnitKerja: {
+                    id: kaprodiId,
+                }
+            },
+            include: {
+                UnitKerja: {
+                    include: {
+                        Anggota: {
+                            include: {
+                                UserInfo: true,
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        return kaprodi;
+    }
+
     static async FindById(id: string) {
         const user = await db.user.findUnique({
             where: {
@@ -160,6 +183,12 @@ class UserRepository {
                 salt: true,
                 createdAt: true,
                 updatedAt: true,
+                KepalaUnitKerja: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                },
             }
         })
 
@@ -177,6 +206,7 @@ class UserRepository {
                 email: true,
                 password: true,
                 salt: true,
+                role: true,
                 createdAt: true,
                 updatedAt: true,
             }

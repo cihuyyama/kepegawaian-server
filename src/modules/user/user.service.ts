@@ -5,6 +5,7 @@ import UserRepository from "./user.repository";
 import { CreateUserInput, LoginUserInput, UpdateUserInput } from "./user.schema";
 import path from "path";
 import fs from "fs";
+import { db } from "../../config/prisma";
 
 class UserService {
     static async Register(data: CreateUserInput) {
@@ -35,6 +36,8 @@ class UserService {
         const payload = {
             id: user.id,
             username: user.username,
+            email: user.email,
+            role: user.role,
         }
 
         return payload
@@ -43,6 +46,16 @@ class UserService {
     static async GetAllUsers(username?: string) {
         const users = await UserRepository.FindAll(username)
         return users
+    }
+
+    static async GetAllUsersByKaprodi(userId: string) {
+        const user = await UserRepository.FindByIdPrivate(userId)
+        if (!user || !user.KepalaUnitKerja) {
+            throw new Error("User not found or not a Kaprodi")
+        }
+
+        const kaprodi = await UserRepository.FindAllByKaprodi(user.KepalaUnitKerja.id)
+        return kaprodi
     }
 
     static async GetUserById(id: string) {

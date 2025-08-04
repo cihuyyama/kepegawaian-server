@@ -36,7 +36,6 @@ export async function loginUserHandler(
         const token = request.jwt.sign(
             {
                 ...payload,
-                role: 'admin',
             },
             {
                 expiresIn: 1000 * 60 * 60 * 24 * 7, // 7 days
@@ -109,6 +108,25 @@ export async function getAllUsersHandler(
         const { username } = request.query
 
         const users = await UserService.GetAllUsers(username)
+
+        reply.send({
+            data: users,
+            message: "Users fetched successfully",
+            status: 200,
+        })
+    } catch (error) {
+        errorFilter(error, reply)
+    }
+}
+
+export async function getAllUsersByKaprodiHandler(
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
+    try {
+        const userId = request.user.id
+
+        const users = await UserService.GetAllUsersByKaprodi(userId)
 
         reply.send({
             data: users,
