@@ -27,6 +27,8 @@ const createUserInfoSchema = z.object({
     JabatanStruktural: z.string().optional(),
     JabatanFungsional: z.string().optional(),
     WorkEmail: z.string().optional(),
+    agama: z.string().optional(),
+    golonganDarah: z.string().optional(),
 })
 
 const createDokumenSchema = z.object({

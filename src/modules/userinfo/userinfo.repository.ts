@@ -32,6 +32,8 @@ class UserInfoRepository {
                 JabatanStruktural: data.JabatanStruktural,
                 JabatanFungsional: data.JabatanFungsional,
                 WorkEmail: data.WorkEmail,
+                agama: data.agama,
+                golonganDarah: data.golonganDarah,
             },
             create: {
                 userId: data.userId,
@@ -56,7 +58,8 @@ class UserInfoRepository {
                 JabatanStruktural: data.JabatanStruktural,
                 JabatanFungsional: data.JabatanFungsional,
                 WorkEmail: data.WorkEmail,
-
+                agama: data.agama,
+                golonganDarah: data.golonganDarah,
             },
         });
 
@@ -151,6 +154,8 @@ class UserInfoRepository {
                 Phone: true,
                 NBM: true,
                 NIDN: true,
+                agama: true,
+                golonganDarah: true,
                 NIDK: true,
                 NUPTK: true,
                 IDScholar: true,
@@ -203,6 +208,8 @@ class UserInfoRepository {
                 NIDN: true,
                 NIDK: true,
                 NUPTK: true,
+                agama: true,
+                golonganDarah: true,
                 IDScholar: true,
                 IDScopus: true,
                 IDShinta: true,
@@ -253,6 +260,8 @@ class UserInfoRepository {
                 NBM: true,
                 NIDN: true,
                 NIDK: true,
+                agama: true,
+                golonganDarah: true,
                 NUPTK: true,
                 IDScholar: true,
                 IDScopus: true,
